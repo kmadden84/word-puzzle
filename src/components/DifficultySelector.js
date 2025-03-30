@@ -3,7 +3,16 @@ import { useGame } from '../contexts/GameContext';
 import './DifficultySelector.css';
 
 const DifficultySelector = () => {
-  const { difficulty, changeDifficulty, gameStatus, guesses, solvedWords, clearSolvedWords } = useGame();
+  const { 
+    difficulty, 
+    changeDifficulty, 
+    gameStatus, 
+    guesses, 
+    solvedWords, 
+    clearSolvedWords,
+    resetAllGameData
+  } = useGame();
+  
   const isGameInProgress = gameStatus === 'playing' && guesses.length > 0;
 
   const difficultyOptions = [
@@ -48,6 +57,19 @@ const DifficultySelector = () => {
           title="This will reset your list of solved words, allowing you to solve all puzzles again"
         >
           Reset Solved Words
+        </button>
+        
+        {/* Add a button for complete reset */}
+        <button 
+          className="reset-all-button"
+          onClick={() => {
+            if (window.confirm('This will clear ALL game data including stats. Continue?')) {
+              resetAllGameData();
+            }
+          }}
+          title="This will reset ALL game data including stats and history"
+        >
+          Reset Game Data
         </button>
       </div>
     </div>

@@ -10,6 +10,9 @@ const getDayOfYear = (date) => {
 
 // Get today's puzzle based on the date and difficulty
 export const getTodaysPuzzle = (difficulty = 'beginner', currentPuzzleId = null, solvedWordIds = []) => {
+  console.log(`Getting puzzle for difficulty: ${difficulty}`);
+  console.log(`Solved word IDs:`, solvedWordIds);
+  
   // Filter puzzles by difficulty
   const filteredPuzzles = puzzleData.filter(puzzle => 
     puzzle.difficulty === difficulty.toLowerCase()
@@ -21,15 +24,23 @@ export const getTodaysPuzzle = (difficulty = 'beginner', currentPuzzleId = null,
   }
   
   // Create word IDs for the puzzles if they don't have them already
-  const puzzlesWithIds = filteredPuzzles.map((puzzle, index) => ({
-    ...puzzle,
-    wordId: `${difficulty}-${puzzle.word.toLowerCase()}`
-  }));
+  const puzzlesWithIds = filteredPuzzles.map((puzzle, index) => {
+    const wordId = `${difficulty}-${puzzle.word.toLowerCase()}`;
+    console.log(`Created wordId: ${wordId} for word: ${puzzle.word}`);
+    return {
+      ...puzzle,
+      wordId: wordId
+    };
+  });
   
   // Filter out solved words
-  const availablePuzzles = puzzlesWithIds.filter(puzzle => 
-    !solvedWordIds.includes(puzzle.wordId)
-  );
+  const availablePuzzles = puzzlesWithIds.filter(puzzle => {
+    const isFiltered = !solvedWordIds.includes(puzzle.wordId);
+    if (!isFiltered) {
+      console.log(`Filtering out solved word: ${puzzle.word} with ID: ${puzzle.wordId}`);
+    }
+    return isFiltered;
+  });
   
   // If all words have been solved, reset and use all words
   if (availablePuzzles.length === 0) {
@@ -43,6 +54,7 @@ export const getTodaysPuzzle = (difficulty = 'beginner', currentPuzzleId = null,
   if (currentPuzzleId) {
     // Find the current puzzle in the available puzzles
     const currentIndex = availablePuzzles.findIndex(puzzle => puzzle.id === currentPuzzleId);
+    console.log(`Looking for puzzle with ID: ${currentPuzzleId}, found at index: ${currentIndex}`);
     
     if (currentIndex !== -1 && currentIndex < availablePuzzles.length - 1) {
       // Return the next puzzle
@@ -56,15 +68,19 @@ export const getTodaysPuzzle = (difficulty = 'beginner', currentPuzzleId = null,
   // For demo purposes, select a random puzzle from available puzzles
   const randomIndex = Math.floor(Math.random() * availablePuzzles.length);
   const selectedPuzzle = availablePuzzles[randomIndex];
+  console.log(`Selected random puzzle: ${selectedPuzzle.word}`);
   
   // Add date-based ID for persistent storage
   const today = new Date();
   const dateString = `${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate()}`;
   
-  return {
+  const puzzle = {
     ...selectedPuzzle,
     id: `${dateString}-${difficulty}-${randomIndex}` // Use date, difficulty and index as ID
   };
+  
+  console.log(`Returning puzzle: ${puzzle.word} with ID: ${puzzle.id}`);
+  return puzzle;
 };
 
 // Hash function to get a consistent index from a string

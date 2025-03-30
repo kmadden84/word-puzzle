@@ -87,7 +87,13 @@ const Instructions = ({ onClose, isDarkMode }) => {
           
           <div className="instruction-section">
             <h3>Hints:</h3>
-            <p>You can use up to 3 hints per puzzle. A hint will reveal a letter's position.</p>
+            <p>Hint availability is based on word length:</p>
+            <ul>
+              <li>3-letter words: 1 hint available</li>
+              <li>4-6 letter words: 2 hints available</li>
+              <li>7+ letter words: 3 hints available</li>
+            </ul>
+            <p>Each hint reveals one letter position in the word.</p>
           </div>
           
           <div className="instruction-section">
