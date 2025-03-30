@@ -5,6 +5,19 @@ const GuessGrid = ({ guesses, currentGuess, wordLength, maxGuesses, shake }) => 
   // Create empty rows to fill the grid
   const rows = [];
   
+  // Always enable scrolling to fix display issues
+  const needsScrolling = true;
+  
+  // Log the scrolling decision
+  console.log(`GuessGrid: Word has length ${wordLength} - Scrolling always enabled`);
+  
+  // Helper to create a row with cells
+  const createRow = (cells, key) => (
+    <div key={key} className="guess-row">
+      {cells}
+    </div>
+  );
+  
   // Add existing guesses
   for (let i = 0; i < guesses.length; i++) {
     const guess = guesses[i];
@@ -37,11 +50,7 @@ const GuessGrid = ({ guesses, currentGuess, wordLength, maxGuesses, shake }) => 
       );
     }
     
-    rows.push(
-      <div key={i} className="guess-row">
-        {row}
-      </div>
-    );
+    rows.push(createRow(row, i));
   }
   
   // Add current guess
@@ -76,11 +85,7 @@ const GuessGrid = ({ guesses, currentGuess, wordLength, maxGuesses, shake }) => 
       );
     }
     
-    rows.push(
-      <div key={guesses.length} className="guess-row">
-        {row}
-      </div>
-    );
+    rows.push(createRow(row, guesses.length));
   }
   
   // Add empty rows to fill the grid
@@ -99,16 +104,17 @@ const GuessGrid = ({ guesses, currentGuess, wordLength, maxGuesses, shake }) => 
       );
     }
     
-    rows.push(
-      <div key={i} className="guess-row">
-        {row}
-      </div>
-    );
+    rows.push(createRow(row, i));
   }
   
+  // Add "scrollable" class to container if needed
+  const containerClass = `guess-grid-container${needsScrolling ? ' scrollable' : ''}`;
+
   return (
-    <div className="guess-grid">
-      {rows}
+    <div className={containerClass}>
+      <div className="guess-grid">
+        {rows}
+      </div>
     </div>
   );
 };

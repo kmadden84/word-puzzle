@@ -5,7 +5,12 @@ import { useGame } from '../contexts/GameContext';
 import './LevelCompleteModal.css';
 
 const LevelCompleteModal = ({ show, difficulty, onClose, solvedCount, totalCount }) => {
-  const { changeDifficulty } = useGame();
+  // Import all needed functions from GameContext
+  const { 
+    changeDifficulty, 
+    getDifficultyWordCount, 
+    solvedWords 
+  } = useGame();
 
   // Map difficulty levels to readable names
   const difficultyNames = {
@@ -23,19 +28,39 @@ const LevelCompleteModal = ({ show, difficulty, onClose, solvedCount, totalCount
   
   const isAdvanced = difficulty === 'advanced';
   
+  // Check if all levels have been completed
+  const allLevelsCompleted = isAdvanced && (() => {
+    if (!getDifficultyWordCount || !solvedWords) return false;
+    
+    const beginnerWordCount = getDifficultyWordCount('beginner');
+    const intermediateWordCount = getDifficultyWordCount('intermediate');
+    
+    const solvedBeginnerCount = solvedWords['beginner']?.length || 0;
+    const solvedIntermediateCount = solvedWords['intermediate']?.length || 0;
+    
+    return solvedBeginnerCount >= beginnerWordCount && 
+          solvedIntermediateCount >= intermediateWordCount;
+  })();
+  
   // Handle continue button click - change difficulty BEFORE closing modal
   const handleContinue = useCallback(() => {
-    // Only change difficulty if not already at advanced level
-    if (!isAdvanced && nextDifficultyMap[difficulty]) {
+    // Check if we're in the process of resetting - if solvedCount is 0, we're likely resetting
+    const isResetting = solvedCount === 0;
+    
+    // Only change difficulty if not already at advanced level and not in reset mode
+    if (!isResetting && !isAdvanced && nextDifficultyMap[difficulty]) {
       // Change to next difficulty level
       const nextDifficulty = nextDifficultyMap[difficulty];
       console.log(`Moving to ${nextDifficulty} difficulty from modal continue button`);
       changeDifficulty(nextDifficulty);
+    } else if (!isResetting && isAdvanced) {
+      // For advanced level, just close the modal and let Game.js handle logic
+      console.log("Advanced level completed - letting Game.js handle next steps");
     }
     
     // Close the modal (which will also trigger getNextWord)
     onClose();
-  }, [difficulty, isAdvanced, changeDifficulty, onClose]);
+  }, [difficulty, isAdvanced, changeDifficulty, onClose, solvedCount]);
 
   // Add body class when modal opens and remove when it closes
   useEffect(() => {
@@ -94,7 +119,11 @@ const LevelCompleteModal = ({ show, difficulty, onClose, solvedCount, totalCount
           </p>
         ) : (
           <p className="next-level-message">
-            You've mastered all difficulty levels! Great job!
+            {allLevelsCompleted ? (
+              "You've mastered all difficulty levels! Great job!"
+            ) : (
+              "You'll be returned to Beginner level to try more words!"
+            )}
           </p>
         )}
         

@@ -30,14 +30,71 @@
   color: var(--primary-color);
 }
 
+/* Updated guess area for better scrolling */
 .guess-area {
+  margin: 20px 0;
+  min-height: 240px;
   width: 100%;
+  max-width: 100%;
+  overflow-x: hidden; /* Default to no scrolling */
+  padding-bottom: 5px; 
   cursor: text;
-  margin: 15px 0 20px 0;
-  min-height: 370px;
+  display: flex;
+  align-items: center;
+  justify-content: center; /* Center for normal content */
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  /* Add padding to control scroll behavior */
+  scroll-padding-left: 5px;
+  scroll-padding-right: 5px;
+}
+
+/* Only enable scrolling when needed via JS adding class */
+.guess-area.scrollable {
+  overflow-x: auto;
+  justify-content: flex-start; /* Align to start for scrollable content */
+  /* Limit how far you can scroll past content */
+  scroll-padding: 0 5px;
+  padding: 0 5px;
+}
+
+.guess-area-inner {
+  width: fit-content;
+  min-width: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
+  padding: 0 2px; /* Small padding to prevent touching edges */
+}
+
+/* For better scrollbar visibility on touch devices */
+.guess-area::-webkit-scrollbar {
+  height: 8px;
+  display: none; /* Hide scrollbar on WebKit browsers */
+}
+
+/* Only show scrollbar when scrollable */
+.guess-area.scrollable::-webkit-scrollbar {
+  display: block; /* Show scrollbar when scrollable */
+}
+
+.guess-area::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 4px;
+}
+
+.guess-area::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 4px;
+}
+
+/* For dark mode */
+.dark-mode .guess-area::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.dark-mode .guess-area::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.3);
 }
 
 .instructions-button {
@@ -307,17 +364,17 @@
   }
 }
 
+/* Override conflicting styles */
 .guess-grid-container {
+  width: auto;
+  padding: 0;
   display: flex;
-  flex-direction: column;
-  align-items: center;
   justify-content: center;
-  width: 100%;
-  max-width: 500px;
-  flex-grow: 1;
-  padding: 10px 0;
+  margin-bottom: 20px;
 }
 
+/* Remove these conflicting styles as they are defined in GuessGrid.css */
+/* 
 .guess-grid {
   display: flex;
   flex-direction: column;
@@ -330,4 +387,66 @@
   display: flex;
   gap: 5px;
   justify-content: center;
+} 
+*/
+
+/* Game completed screen */
+.game-completed {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 2rem;
+  margin: 2rem auto;
+  max-width: 90%;
+  background-color: rgba(0, 0, 0, 0.1);
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.dark-mode .game-completed {
+  background-color: rgba(255, 255, 255, 0.05);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+.game-completed h1 {
+  color: #f5a623;
+  font-size: 2rem;
+  margin-bottom: 1rem;
+  animation: pulse 2s infinite;
+}
+
+.game-completed p {
+  margin-bottom: 1rem;
+  line-height: 1.6;
+  font-size: 1.1rem;
+}
+
+.game-completed-actions {
+  margin-top: 2rem;
+}
+
+.reset-button {
+  background-color: #4a6bff;
+  color: white;
+  border: none;
+  padding: 0.8rem 1.5rem;
+  font-size: 1rem;
+  font-weight: bold;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.reset-button:hover {
+  background-color: #3450d9;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
 } 

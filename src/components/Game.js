@@ -27,7 +27,9 @@ const Game = () => {
     getNextWord,
     solvedWords,
     changeDifficulty,
-    getDifficultyWordCount
+    getDifficultyWordCount,
+    clearSolvedWords,
+    showMessage
   } = useGame();
   
   const [showFireworks, setShowFireworks] = useState(false);
@@ -35,6 +37,7 @@ const Game = () => {
   const [timeRemaining, setTimeRemaining] = useState(2.5);
   const [showInstructions, setShowInstructions] = useState(false);
   const [showLevelCompleteModal, setShowLevelCompleteModal] = useState(false);
+  const [gameCompleted, setGameCompleted] = useState(false);
   const inputRef = useRef(null);
   const { isDarkMode } = useTheme();
 
@@ -63,6 +66,7 @@ const Game = () => {
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (gameStatus !== 'playing') return;
+      if (!puzzle || !puzzle.word) return; // Skip if puzzle is null
       
       if (e.key === 'Enter') {
         console.log("Enter key pressed, submitting guess:", currentGuess);
@@ -124,7 +128,8 @@ const Game = () => {
 
   // Detect when all words in a difficulty level are solved
   useEffect(() => {
-    if (!puzzle) return;
+    // Skip this check if game is already in completed state
+    if (!puzzle || gameCompleted) return;
     
     const solvedCount = solvedWords[difficulty]?.length || 0;
     const totalCount = getDifficultyWordCount(difficulty);
@@ -132,14 +137,14 @@ const Game = () => {
     console.log(`Checking level completion: ${solvedCount}/${totalCount} solved in ${difficulty}`);
     
     // Check if we've solved all words for this difficulty and if so, show the level complete modal
-    if (solvedCount >= totalCount && totalCount > 0) {
+    if (solvedCount >= totalCount && totalCount > 0 && !showLevelCompleteModal) {
       console.log(`All words solved in ${difficulty} difficulty! Showing level complete modal.`);
       // Using setTimeout to make sure all other game state updates are done first
       setTimeout(() => {
         setShowLevelCompleteModal(true);
       }, 1500);
     }
-  }, [solvedWords, difficulty, puzzle, getDifficultyWordCount]);
+  }, [solvedWords, difficulty, puzzle, getDifficultyWordCount, gameCompleted, showLevelCompleteModal]);
 
   // Clean up timer on unmount
   useEffect(() => {
@@ -150,16 +155,136 @@ const Game = () => {
     };
   }, [autoAdvanceTimer]);
 
+  // Check if the game is completed (all words in advanced difficulty solved)
+  // AND beginner and intermediate are also completed
+  useEffect(() => {
+    // Skip if no puzzle or after manual reset
+    if (!puzzle || solvedWords['advanced']?.length === 0) {
+      // If we had previously set gameCompleted to true, reset it
+      if (gameCompleted) {
+        setGameCompleted(false);
+      }
+      return;
+    }
+    
+    if (difficulty === 'advanced') {
+      // Check if all difficulty levels are completed
+      const advancedWordCount = getDifficultyWordCount('advanced');
+      const intermediateWordCount = getDifficultyWordCount('intermediate');
+      const beginnerWordCount = getDifficultyWordCount('beginner');
+      
+      const solvedAdvancedCount = solvedWords['advanced']?.length || 0;
+      const solvedIntermediateCount = solvedWords['intermediate']?.length || 0;
+      const solvedBeginnerCount = solvedWords['beginner']?.length || 0;
+      
+      // Only set gameCompleted if all levels have been completed
+      const allLevelsCompleted = 
+        solvedAdvancedCount >= advancedWordCount && 
+        solvedIntermediateCount >= intermediateWordCount && 
+        solvedBeginnerCount >= beginnerWordCount;
+      
+      if (allLevelsCompleted && !gameCompleted) {
+        console.log("All words in all difficulties completed!");
+        setGameCompleted(true);
+      } else if (!allLevelsCompleted && gameCompleted) {
+        // Make sure to reset gameCompleted if words were removed
+        setGameCompleted(false);
+      }
+    }
+  }, [difficulty, solvedWords, getDifficultyWordCount, gameCompleted, puzzle]);
+
   const handleCloseModal = () => {
     setShowLevelCompleteModal(false);
     setShowFireworks(false);
+    
+    // For advanced difficulty, don't try to get next word if all are completed
+    if (difficulty === 'advanced' && 
+        solvedWords['advanced']?.length >= getDifficultyWordCount('advanced')) {
+      console.log("All advanced words completed - not trying to get next word");
+      
+      // Check if all levels have been completed
+      const intermediateWordCount = getDifficultyWordCount('intermediate');
+      const beginnerWordCount = getDifficultyWordCount('beginner');
+      const solvedIntermediateCount = solvedWords['intermediate']?.length || 0;
+      const solvedBeginnerCount = solvedWords['beginner']?.length || 0;
+      
+      const allLevelsCompleted = 
+        solvedIntermediateCount >= intermediateWordCount && 
+        solvedBeginnerCount >= beginnerWordCount;
+      
+      if (allLevelsCompleted) {
+        // Show game completion screen
+        setGameCompleted(true);
+        return;
+      } else {
+        // Just go back to Beginner level
+        console.log("Advanced completed but not all levels - going back to Beginner");
+        changeDifficulty('beginner');
+        // Clear the level complete modal flag before getting next word
+        setTimeout(() => {
+          getNextWord();
+        }, 100);
+        return;
+      }
+    }
     
     // This will get the next word without automatically changing difficulty
     // The difficulty change happens in GameContext when the continue button is clicked
     getNextWord();
   };
 
+  // Determine if word length requires scrolling - always enable for now to fix scrolling issues
+  const needsScrolling = true; // Force scrolling to ensure no content is cut off
+
+  // Log the current word and scrolling state - with null check
+  console.log(`Word "${puzzle?.word || 'loading'}" has length ${puzzle?.word?.length || 0} - Scrolling enabled: ${needsScrolling}`);
+  
+  // Class for guess area with conditional scrolling
+  const guessAreaClass = `guess-area${needsScrolling ? ' scrollable' : ''}`;
+
+  // Early return if puzzle is null to prevent errors
   if (!puzzle) return <div className="loading">Loading puzzle...</div>;
+
+  // Special state when all words in all difficulties are completed
+  if (gameCompleted && puzzle) {
+    return (
+      <div className="game-container">
+        <div className="game-completed">
+          <h1>Congratulations!</h1>
+          <p>You've successfully completed all words in all difficulty levels!</p>
+          <p>Check back later for new words or reset your progress to play again.</p>
+          <div className="game-completed-actions">
+            <button 
+              className="reset-button" 
+              onClick={() => {
+                // First clear the completedGame state
+                setGameCompleted(false);
+                
+                // Then clear solved words
+                clearSolvedWords();
+                
+                // Important: set to false BEFORE changing difficulty to avoid triggering level complete check
+                setShowLevelCompleteModal(false);
+                
+                // Manually set to beginner rather than calling changeDifficulty
+                // to avoid side effects that might trigger modals
+                localStorage.setItem('wordPuzzleDifficulty', 'beginner');
+                changeDifficulty('beginner');
+                
+                // Add a slight delay before getting the next word to ensure state updates complete
+                setTimeout(() => {
+                  showMessage("Game reset! Starting with Beginner level.", "success");
+                  getNextWord();
+                }, 100);
+              }}
+            >
+              Reset Progress & Play Again
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="game-container">
@@ -198,6 +323,9 @@ const Game = () => {
         className="hidden-input"
         value=""  // Always empty, we manually track input
         onChange={(e) => {
+          // Skip if puzzle is null
+          if (!puzzle || !puzzle.word) return;
+          
           // Get the typed character
           const typed = e.target.value.toUpperCase();
           
@@ -256,14 +384,16 @@ const Game = () => {
       />
 
       {/* Clickable area to focus input on mobile */}
-      <div className="guess-area" onClick={focusInput}>
-        <GuessGrid 
-          guesses={guesses} 
-          currentGuess={currentGuess}
-          wordLength={puzzle.word.length}
-          maxGuesses={6}
-          shake={shake}
-        />
+      <div className={guessAreaClass} onClick={focusInput}>
+        <div className="guess-area-inner">
+          <GuessGrid 
+            guesses={guesses} 
+            currentGuess={currentGuess}
+            wordLength={puzzle?.word?.length || 5}
+            maxGuesses={6}
+            shake={shake}
+          />
+        </div>
       </div>
 
       <div className="hint-container">
@@ -278,6 +408,8 @@ const Game = () => {
       
       <Keyboard
         onKeyPress={(key) => {
+          if (!puzzle || !puzzle.word) return; // Skip if puzzle is null
+          
           if (key === 'ENTER') {
             console.log("Virtual keyboard Enter pressed, submitting guess:", currentGuess);
             submitGuess();
@@ -285,7 +417,7 @@ const Game = () => {
             const newGuess = currentGuess.slice(0, -1);
             console.log("Virtual keyboard backspace, new guess:", newGuess);
             setCurrentGuess(newGuess);
-          } else if (currentGuess.length < puzzle.word.length) {
+          } else if (currentGuess.length < (puzzle?.word?.length || 5)) {
             const newGuess = currentGuess + key;
             console.log("Virtual keyboard updated guess to:", newGuess);
             setCurrentGuess(newGuess);
@@ -297,7 +429,7 @@ const Game = () => {
 
       {message.text && <Message text={message.text} type={message.type} />}
 
-      {gameStatus !== 'playing' && (
+      {gameStatus !== 'playing' && puzzle && (
         <div className="game-result">
           <h2 className={gameStatus === 'won' ? 'success-text' : 'error-text'}>
             {gameStatus === 'won' ? 'Well done!' : 'Better luck next time!'}
