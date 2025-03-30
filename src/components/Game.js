@@ -140,7 +140,10 @@ const Game = () => {
             const lastChar = typed.slice(-1);
             if (/^[A-Z]$/.test(lastChar) && currentGuess.length < puzzle.word.length) {
               console.log("Adding character:", lastChar);
-              setCurrentGuess(prev => prev + lastChar);
+              // Make sure we can track this state update
+              const newGuess = currentGuess + lastChar;
+              console.log("New guess will be:", newGuess);
+              setCurrentGuess(newGuess);
             }
           }
         }}
@@ -153,13 +156,37 @@ const Game = () => {
           } else if (e.key === 'Backspace') {
             console.log("Backspace detected, removing last character");
             e.preventDefault();
-            setCurrentGuess(prev => prev.slice(0, -1));
+            setCurrentGuess(prev => {
+              const newGuess = prev.slice(0, -1);
+              console.log("After backspace:", newGuess);
+              return newGuess;
+            });
+          }
+        }}
+        // Clear any potential selection or input state when focused
+        onFocus={() => {
+          // Ensure the input is cleared on focus
+          if (inputRef.current) {
+            setTimeout(() => {
+              // Using timeout to ensure this happens after the browser's focus handling
+              inputRef.current.value = '';
+            }, 0);
+          }
+        }}
+        // Ensure the cursor is at the right position
+        onClick={(e) => {
+          // Ensure clicks don't cause odd behavior
+          e.preventDefault();
+          // Make sure the input is ready to receive new characters
+          if (inputRef.current) {
+            inputRef.current.value = '';
           }
         }}
         autoComplete="off"
         autoCapitalize="characters"
         autoCorrect="off"
         spellCheck="false"
+        aria-label="Hidden word input"
       />
 
       {/* Clickable area to focus input on mobile */}
@@ -189,13 +216,13 @@ const Game = () => {
             console.log("Virtual keyboard Enter pressed, submitting guess:", currentGuess);
             submitGuess();
           } else if (key === 'BACKSPACE') {
-            setCurrentGuess(prev => prev.slice(0, -1));
+            const newGuess = currentGuess.slice(0, -1);
+            console.log("Virtual keyboard backspace, new guess:", newGuess);
+            setCurrentGuess(newGuess);
           } else if (currentGuess.length < puzzle.word.length) {
-            setCurrentGuess(prev => {
-              const newGuess = prev + key;
-              console.log("Virtual keyboard updated guess to:", newGuess);
-              return newGuess;
-            });
+            const newGuess = currentGuess + key;
+            console.log("Virtual keyboard updated guess to:", newGuess);
+            setCurrentGuess(newGuess);
           }
         }}
         guesses={guesses}

@@ -127,50 +127,64 @@ export const GameProvider = ({ children }) => {
   const submitGuess = () => {
     if (!puzzle) return;
     
-    // Normalize guess for validation to ensure proper length checking
-    const normalizedGuess = currentGuess.trim();
+    // Debugging - log currentGuess and its length 
+    console.log(`submitGuess called with currentGuess: "${currentGuess}", length: ${currentGuess?.length}, trim length: ${currentGuess?.trim()?.length}`);
     
-    // Check if guess is empty after mobile input changes
-    if (normalizedGuess.length === 0) {
+    // Simplify the logic to avoid unnecessary complexity
+    // Make sure currentGuess is a string first
+    if (!currentGuess || typeof currentGuess !== 'string') {
+      console.error("Invalid currentGuess:", currentGuess);
       showMessage('Please enter a word', 'error');
       setShake(true);
       setTimeout(() => setShake(false), 500);
       return;
     }
     
-    if (normalizedGuess.length !== puzzle.word.length) {
+    // Clean up the guess - uppercase for consistency
+    const cleanGuess = currentGuess.trim().toUpperCase();
+    
+    // Check if guess is empty
+    if (cleanGuess.length === 0) {
+      showMessage('Please enter a word', 'error');
+      setShake(true);
+      setTimeout(() => setShake(false), 500);
+      return;
+    }
+    
+    // Check if guess has the correct length
+    if (cleanGuess.length !== puzzle.word.length) {
       showMessage(`Word must be ${puzzle.word.length} letters`, 'error');
       setShake(true);
       setTimeout(() => setShake(false), 500);
       return;
     }
     
-    if (!/^[A-Za-z]+$/.test(normalizedGuess)) {
+    // Check if guess only contains letters
+    if (!/^[A-Z]+$/.test(cleanGuess)) {
       showMessage('Only letters allowed', 'error');
       setShake(true);
       setTimeout(() => setShake(false), 500);
       return;
     }
     
-    // Normalize for comparison - both to lowercase and trim any whitespace
-    const normalizedGuessLower = normalizedGuess.toLowerCase();
+    // At this point, the guess is valid for submission - whether it's correct or not
+    
+    // Normalize for comparison
+    const normalizedGuessLower = cleanGuess.toLowerCase();
     const normalizedTarget = puzzle.word.toLowerCase().trim();
     
     // Debug logging
-    console.log(`Checking guess: "${normalizedGuess}" against target: "${puzzle.word}"`);
+    console.log(`Checking guess: "${cleanGuess}" against target: "${puzzle.word}"`);
     console.log(`Normalized guess: "${normalizedGuessLower}" against normalized target: "${normalizedTarget}"`);
     console.log(`Direct comparison result: ${normalizedGuessLower === normalizedTarget}`);
 
-    // Run the test matching function for debugging
-    const isMatch = testWordMatching(normalizedGuess, puzzle.word);
-    console.log(`Test matching result: ${isMatch}`);
-
-    const result = checkGuess(normalizedGuess, puzzle.word);
-    const newGuesses = [...guesses, { word: normalizedGuess, result }];
+    // Check results and add to guesses
+    const result = checkGuess(cleanGuess, puzzle.word);
+    const newGuesses = [...guesses, { word: cleanGuess, result }];
     setGuesses(newGuesses);
     setCurrentGuess('');
 
-    // Check if guess is correct using normalized strings for comparison
+    // Determine if the guess is correct
     if (normalizedGuessLower === normalizedTarget) {
       console.log("CORRECT GUESS DETECTED! Marking as won.");
       setGameStatus('won');
