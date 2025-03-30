@@ -1,0 +1,123 @@
+.level-complete-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  animation: fadeIn 0.5s ease-in;
+}
+
+.level-complete-container {
+  background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+  color: white;
+  padding: 30px;
+  border-radius: 20px;
+  text-align: center;
+  max-width: 90%;
+  width: 500px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  position: relative;
+  overflow: hidden;
+  animation: scaleIn 0.5s ease-out;
+}
+
+.dark-mode .level-complete-container {
+  background: linear-gradient(135deg, #3a047e 0%, #153d7e 100%);
+}
+
+.fireworks-animation {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: -1;
+}
+
+.stage-cleared {
+  font-size: 3rem;
+  margin: 0;
+  padding: 20px 0;
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+  background: linear-gradient(to right, #f5d020, #f53803);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: pulse 2s infinite;
+}
+
+.completion-message, .next-level-message {
+  font-size: 1.25rem;
+  margin: 15px 0;
+  line-height: 1.4;
+}
+
+.difficulty-name {
+  font-weight: bold;
+  color: #ffde59;
+}
+
+.next-difficulty {
+  font-weight: bold;
+  font-size: 1.5rem;
+  color: #5affff;
+}
+
+.continue-button {
+  margin-top: 30px;
+  padding: 12px 30px;
+  background-color: rgba(255, 255, 255, 0.2);
+  color: white;
+  border: 2px solid white;
+  border-radius: 30px;
+  font-size: 1.2rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.continue-button:hover {
+  background-color: rgba(255, 255, 255, 0.3);
+  transform: scale(1.05);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes scaleIn {
+  from { transform: scale(0.8); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+
+@media (max-width: 600px) {
+  .level-complete-container {
+    padding: 20px;
+    width: 90%;
+  }
+  
+  .stage-cleared {
+    font-size: 2.5rem;
+  }
+  
+  .completion-message, .next-level-message {
+    font-size: 1rem;
+  }
+  
+  .next-difficulty {
+    font-size: 1.25rem;
+  }
+} 

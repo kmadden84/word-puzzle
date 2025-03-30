@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useGame } from '../contexts/GameContext';
 import './DifficultySelector.css';
 
@@ -10,43 +10,68 @@ const DifficultySelector = () => {
     guesses, 
     solvedWords, 
     clearSolvedWords,
-    resetAllGameData
+    resetAllGameData,
+    getDifficultyWordCount
   } = useGame();
   
   const isGameInProgress = gameStatus === 'playing' && guesses.length > 0;
 
-  const difficultyOptions = [
-    { value: 'beginner', label: 'Beginner', description: '3-5 letter words' },
-    { value: 'intermediate', label: 'Intermediate', description: '5-6 letter words' },
-    { value: 'advanced', label: 'Advanced', description: '7+ letter words' }
-  ];
+  const [progress, setProgress] = useState({
+    beginner: 0,
+    intermediate: 0,
+    advanced: 0
+  });
+
+  // Calculate progress percentages when solvedWords changes
+  useEffect(() => {
+    const newProgress = {};
+    
+    for (const level of ['beginner', 'intermediate', 'advanced']) {
+      const solved = solvedWords[level]?.length || 0;
+      const total = getDifficultyWordCount(level);
+      newProgress[level] = total > 0 ? (solved / total) * 100 : 0;
+    }
+    
+    setProgress(newProgress);
+  }, [solvedWords, getDifficultyWordCount]);
 
   return (
     <div className="difficulty-selector">
-      <div className="difficulty-selector-header">
-        <h3>Difficulty</h3>
-        {isGameInProgress && (
-          <span className="difficulty-locked-message">
-            Finish current game to change
-          </span>
-        )}
+      <div className="difficulty-header">
+        <h3>Difficulty Level</h3>
       </div>
-
       <div className="difficulty-options">
-        {difficultyOptions.map(option => (
-          <button
-            key={option.value}
-            className={`difficulty-option ${difficulty === option.value ? 'selected' : ''}`}
-            onClick={() => changeDifficulty(option.value)}
-            disabled={isGameInProgress}
-          >
-            <span className="difficulty-label">{option.label}</span>
-            <span className="difficulty-description">{option.description}</span>
-            <span className="difficulty-solved">
-              {solvedWords[option.value]?.length || 0} solved
-            </span>
-          </button>
-        ))}
+        {['beginner', 'intermediate', 'advanced'].map((level) => {
+          const solved = solvedWords[level]?.length || 0;
+          const total = getDifficultyWordCount(level);
+          
+          return (
+            <button
+              key={level}
+              className={`difficulty-option ${difficulty === level ? 'selected' : ''}`}
+              onClick={() => changeDifficulty(level)}
+              disabled={isGameInProgress}
+            >
+              <span className="difficulty-label">{level.charAt(0).toUpperCase() + level.slice(1)}</span>
+              <span className="difficulty-description">
+                {level === 'beginner' ? '3-5 letter words' : 
+                 level === 'intermediate' ? '5-6 letter words' : 
+                 '7+ letter words'}
+              </span>
+              <div className="difficulty-progress">
+                <span className="difficulty-solved">
+                  {solved}/{total} solved
+                </span>
+                <div className="progress-bar-container">
+                  <div 
+                    className="progress-bar"
+                    style={{ width: `${progress[level]}%` }}
+                  ></div>
+                </div>
+              </div>
+            </button>
+          );
+        })}
       </div>
       
       {/* Button to reset solved words history */}

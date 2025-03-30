@@ -8,6 +8,11 @@ const getDayOfYear = (date) => {
   return Math.floor(diff / oneDay);
 };
 
+// Count total words in a specific difficulty
+export const getDifficultyWordCount = (targetDifficulty) => {
+  return puzzleData.filter(puzzle => puzzle.difficulty === targetDifficulty.toLowerCase()).length;
+};
+
 // Get today's puzzle based on the date and difficulty
 export const getTodaysPuzzle = (difficulty = 'beginner', currentPuzzleId = null, solvedWordIds = []) => {
   console.log(`Getting puzzle for difficulty: ${difficulty}`);
@@ -42,10 +47,15 @@ export const getTodaysPuzzle = (difficulty = 'beginner', currentPuzzleId = null,
     return isFiltered;
   });
   
-  // If all words have been solved, reset and use all words
+  // MODIFICATION: Don't reset and use all words when all are solved
+  // This allows the level completion logic to work correctly  
   if (availablePuzzles.length === 0) {
-    console.log("All words solved! Starting over with all words.");
-    availablePuzzles.push(...puzzlesWithIds);
+    console.log("All words solved! Ready for level completion.");
+    // Return the first puzzle with a flag indicating all are completed
+    return {
+      ...puzzlesWithIds[0],
+      allCompleted: true
+    };
   }
   
   console.log(`Available puzzles for ${difficulty}: ${availablePuzzles.length} words`);

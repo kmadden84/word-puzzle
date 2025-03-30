@@ -7,6 +7,7 @@ import Message from './Message';
 import DifficultySelector from './DifficultySelector';
 import Fireworks from './Fireworks';
 import Instructions from './Instructions';
+import LevelCompleteModal from './LevelCompleteModal';
 import './Game.css';
 
 const Game = () => {
@@ -19,16 +20,21 @@ const Game = () => {
     message,
     shake,
     hintsRemaining,
+    revealedHints,
     useHint,
     submitGuess,
     difficulty,
-    getNextWord
+    getNextWord,
+    solvedWords,
+    changeDifficulty,
+    getDifficultyWordCount
   } = useGame();
   
   const [showFireworks, setShowFireworks] = useState(false);
   const [autoAdvanceTimer, setAutoAdvanceTimer] = useState(null);
   const [timeRemaining, setTimeRemaining] = useState(2.5);
   const [showInstructions, setShowInstructions] = useState(false);
+  const [showLevelCompleteModal, setShowLevelCompleteModal] = useState(false);
   const inputRef = useRef(null);
   const { isDarkMode } = useTheme();
 
@@ -116,6 +122,25 @@ const Game = () => {
     }
   }, [gameStatus, getNextWord]);
 
+  // Detect when all words in a difficulty level are solved
+  useEffect(() => {
+    if (!puzzle) return;
+    
+    const solvedCount = solvedWords[difficulty]?.length || 0;
+    const totalCount = getDifficultyWordCount(difficulty);
+    
+    console.log(`Checking level completion: ${solvedCount}/${totalCount} solved in ${difficulty}`);
+    
+    // Check if we've solved all words for this difficulty and if so, show the level complete modal
+    if (solvedCount >= totalCount && totalCount > 0) {
+      console.log(`All words solved in ${difficulty} difficulty! Showing level complete modal.`);
+      // Using setTimeout to make sure all other game state updates are done first
+      setTimeout(() => {
+        setShowLevelCompleteModal(true);
+      }, 1500);
+    }
+  }, [solvedWords, difficulty, puzzle, getDifficultyWordCount]);
+
   // Clean up timer on unmount
   useEffect(() => {
     return () => {
@@ -125,11 +150,29 @@ const Game = () => {
     };
   }, [autoAdvanceTimer]);
 
+  const handleCloseModal = () => {
+    setShowLevelCompleteModal(false);
+    setShowFireworks(false);
+    
+    // This will get the next word without automatically changing difficulty
+    // The difficulty change happens in GameContext when the continue button is clicked
+    getNextWord();
+  };
+
   if (!puzzle) return <div className="loading">Loading puzzle...</div>;
 
   return (
     <div className="game-container">
       {showFireworks && <Fireworks />}
+      
+      <LevelCompleteModal 
+        show={showLevelCompleteModal}
+        difficulty={difficulty}
+        onClose={handleCloseModal}
+        isDarkMode={isDarkMode}
+        solvedCount={solvedWords[difficulty]?.length || 0}
+        totalCount={getDifficultyWordCount(difficulty)}
+      />
       
       <div className="game-info">
         <div className="category">

@@ -1,9 +1,17 @@
 import React, { createContext, useState, useEffect, useContext } from 'react';
-import { getTodaysPuzzle, checkGuess, testWordMatching } from '../utils/gameUtils';
+import { getTodaysPuzzle, checkGuess, testWordMatching, getDifficultyWordCount } from '../utils/gameUtils';
 
 const GameContext = createContext();
 
 export const useGame = () => useContext(GameContext);
+
+// This will now be calculated dynamically using getDifficultyWordCount
+// Just keeping this as a fallback
+const DIFFICULTY_FALLBACK_COUNTS = {
+  beginner: 10,
+  intermediate: 15,
+  advanced: 20
+};
 
 // Initial stats structure with tracking by difficulty
 const initialStats = {
@@ -50,6 +58,12 @@ export const GameProvider = ({ children }) => {
     intermediate: [],
     advanced: []
   });
+  // Cache for the word counts by difficulty
+  const [difficultyWordCounts, setDifficultyWordCounts] = useState({
+    beginner: getDifficultyWordCount('beginner'),
+    intermediate: getDifficultyWordCount('intermediate'),
+    advanced: getDifficultyWordCount('advanced')
+  });
 
   // Helper function to determine number of hints based on word length
   const getHintsForWordLength = (wordLength) => {
@@ -62,7 +76,20 @@ export const GameProvider = ({ children }) => {
     }
   };
 
+  // Helper to get the correct word count for a difficulty level
+  const getWordCountForDifficulty = (difficultyLevel) => {
+    return difficultyWordCounts[difficultyLevel] || 
+           DIFFICULTY_FALLBACK_COUNTS[difficultyLevel] || 10;
+  };
+
   useEffect(() => {
+    // Calculate word counts on initial load
+    setDifficultyWordCounts({
+      beginner: getDifficultyWordCount('beginner'),
+      intermediate: getDifficultyWordCount('intermediate'),
+      advanced: getDifficultyWordCount('advanced')
+    });
+    
     // Load game state and solved words from localStorage
     const savedState = localStorage.getItem('wordPuzzleState');
     const savedStats = localStorage.getItem('wordPuzzleStats');
@@ -378,10 +405,28 @@ export const GameProvider = ({ children }) => {
     console.log(`Getting next word. Current difficulty: ${difficulty}`);
     console.log(`Current solved words:`, solvedWordIds);
     
+    // Get the word count for this difficulty
+    const totalWords = getWordCountForDifficulty(difficulty);
+    
+    // Note: Removed auto-switching difficulty code here - this is now handled by the modal's continue button
+    
     // Get the next word in the current difficulty level, excluding solved words
     const nextPuzzle = getTodaysPuzzle(difficulty, puzzle?.id, solvedWordIds);
     console.log("Getting next puzzle after:", puzzle?.id);
     console.log("New puzzle selected:", nextPuzzle);
+    
+    // Check if the returned puzzle has allCompleted flag
+    if (nextPuzzle.allCompleted) {
+      console.log("All words completed in this difficulty");
+      
+      // For advanced difficulty, just show a message since there's no next level
+      if (difficulty === 'advanced') {
+        showMessage('Congratulations! You\'ve solved all words!', 'success');
+      }
+      
+      return;
+    }
+    
     setPuzzle(nextPuzzle);
     
     // Set hints based on word length
@@ -474,7 +519,9 @@ export const GameProvider = ({ children }) => {
     getNextWord,
     changeDifficulty,
     clearSolvedWords,
-    resetAllGameData
+    resetAllGameData,
+    // Export the function that gets word counts dynamically
+    getDifficultyWordCount: getWordCountForDifficulty
   };
 
   return (
