@@ -130,22 +130,32 @@ const Game = () => {
         ref={inputRef}
         type="text"
         className="hidden-input"
-        value={currentGuess}
+        value=""  // Always empty, we manually track input
         onChange={(e) => {
-          const value = e.target.value.toUpperCase();
-          if (value.length <= puzzle.word.length && /^[A-Z]*$/.test(value)) {
-            setCurrentGuess(value);
-            console.log("Input updated to:", value);
+          // Get the typed character
+          const typed = e.target.value.toUpperCase();
+          
+          if (typed && typed.length > 0) {
+            // Only process single alphabetic characters
+            const lastChar = typed.slice(-1);
+            if (/^[A-Z]$/.test(lastChar) && currentGuess.length < puzzle.word.length) {
+              console.log("Adding character:", lastChar);
+              setCurrentGuess(prev => prev + lastChar);
+            }
           }
         }}
         onKeyDown={(e) => {
+          // Handle special keys
           if (e.key === 'Enter') {
             console.log("Enter key detected in input, submitting guess:", currentGuess);
             e.preventDefault();
             submitGuess();
+          } else if (e.key === 'Backspace') {
+            console.log("Backspace detected, removing last character");
+            e.preventDefault();
+            setCurrentGuess(prev => prev.slice(0, -1));
           }
         }}
-        maxLength={puzzle.word.length}
         autoComplete="off"
         autoCapitalize="characters"
         autoCorrect="off"
