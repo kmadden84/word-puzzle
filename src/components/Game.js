@@ -220,6 +220,10 @@ const Game = () => {
         // Just go back to Beginner level
         console.log("Advanced completed but not all levels - going back to Beginner");
         changeDifficulty('beginner');
+        
+        // The getNextWord function will reset hints based on word length,
+        // no need to manually reset hints here
+        
         // Clear the level complete modal flag before getting next word
         setTimeout(() => {
           getNextWord();
@@ -273,7 +277,7 @@ const Game = () => {
                 
                 // Add a slight delay before getting the next word to ensure state updates complete
                 setTimeout(() => {
-                  showMessage("Game reset! Starting with Beginner level.", "success");
+                  // This will also set the hints based on the new word's length
                   getNextWord();
                 }, 100);
               }}

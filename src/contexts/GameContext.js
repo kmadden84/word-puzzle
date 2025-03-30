@@ -454,7 +454,16 @@ export const GameProvider = ({ children }) => {
   const changeDifficulty = (newDifficulty) => {
     if (newDifficulty !== difficulty) {
       if (gameStatus !== 'playing' || guesses.length === 0) {
+        // Save the old difficulty to check if we need to reset the game
+        const oldDifficulty = difficulty;
+        
+        // Update the difficulty state
         setDifficulty(newDifficulty);
+        
+        // The difficulty change will trigger the useEffect that loads a new puzzle,
+        // which will automatically set hints based on word length in resetGame.
+        
+        console.log(`Difficulty changed from ${oldDifficulty} to ${newDifficulty}`);
       } else {
         showMessage('Complete current game before changing difficulty', 'error');
       }
