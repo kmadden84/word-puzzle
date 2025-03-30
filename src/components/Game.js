@@ -35,6 +35,10 @@ const Game = () => {
   // Focus invisible input when clicked on grid area for mobile
   const focusInput = () => {
     if (inputRef.current) {
+      // Clear any existing value to prevent duplication
+      if (inputRef.current.value) {
+        inputRef.current.value = '';
+      }
       inputRef.current.focus();
     }
   };
@@ -49,9 +53,18 @@ const Game = () => {
         e.preventDefault();
         submitGuess();
       } else if (e.key === 'Backspace') {
-        setCurrentGuess(prev => prev.slice(0, -1));
+        // Prevent default only when we're handling it ourselves
+        e.preventDefault();
+        const newGuess = currentGuess.slice(0, -1);
+        console.log("Window keydown backspace, new guess:", newGuess);
+        setCurrentGuess(newGuess);
       } else if (/^[a-zA-Z]$/.test(e.key) && currentGuess.length < (puzzle?.word?.length || 5)) {
-        setCurrentGuess(prev => prev + e.key.toUpperCase());
+        // Prevent default to avoid duplicate characters when using hidden input
+        e.preventDefault();
+        const newChar = e.key.toUpperCase();
+        const newGuess = currentGuess + newChar;
+        console.log("Window keydown adding character:", newChar, "new guess:", newGuess);
+        setCurrentGuess(newGuess);
       }
     };
 
@@ -135,32 +148,29 @@ const Game = () => {
           // Get the typed character
           const typed = e.target.value.toUpperCase();
           
-          if (typed && typed.length > 0) {
-            // Only process single alphabetic characters
-            const lastChar = typed.slice(-1);
-            if (/^[A-Z]$/.test(lastChar) && currentGuess.length < puzzle.word.length) {
-              console.log("Adding character:", lastChar);
-              // Make sure we can track this state update
-              const newGuess = currentGuess + lastChar;
-              console.log("New guess will be:", newGuess);
-              setCurrentGuess(newGuess);
+          // Ignore empty input
+          if (!typed || typed.length === 0) return;
+          
+          // Only process if it contains a valid character and we're not at max length
+          const lastChar = typed.slice(-1);
+          if (/^[A-Z]$/.test(lastChar) && currentGuess.length < puzzle.word.length) {
+            console.log("Input onChange adding character:", lastChar);
+            // Make sure we can track this state update
+            const newGuess = currentGuess + lastChar;
+            console.log("New guess will be:", newGuess);
+            setCurrentGuess(newGuess);
+            
+            // Reset the input field immediately to prevent duplicate inputs
+            if (inputRef.current) {
+              inputRef.current.value = '';
             }
           }
         }}
         onKeyDown={(e) => {
-          // Handle special keys
-          if (e.key === 'Enter') {
-            console.log("Enter key detected in input, submitting guess:", currentGuess);
+          // Skip processing as the window keydown handler will handle this
+          // Just prevent default behavior for these keys to avoid double-handling
+          if (e.key === 'Enter' || e.key === 'Backspace' || /^[a-zA-Z]$/.test(e.key)) {
             e.preventDefault();
-            submitGuess();
-          } else if (e.key === 'Backspace') {
-            console.log("Backspace detected, removing last character");
-            e.preventDefault();
-            setCurrentGuess(prev => {
-              const newGuess = prev.slice(0, -1);
-              console.log("After backspace:", newGuess);
-              return newGuess;
-            });
           }
         }}
         // Clear any potential selection or input state when focused
