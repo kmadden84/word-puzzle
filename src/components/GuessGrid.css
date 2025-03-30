@@ -8,9 +8,9 @@
 .guess-grid {
   display: grid;
   grid-template-rows: repeat(6, 1fr);
-  gap: 8px;
+  gap: 10px;
   width: 100%;
-  max-width: 320px;
+  max-width: 350px;
   margin: 0 auto;
   font-weight: bold;
 }
@@ -21,19 +21,19 @@
 
 .guess-row {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(35px, 1fr));
-  gap: 8px;
+  grid-template-columns: repeat(auto-fit, minmax(50px, 1fr));
+  gap: 10px;
   justify-content: center;
 }
 
 .letter-cell {
   aspect-ratio: 1/1;
-  min-width: 45px;
-  min-height: 45px;
+  min-width: 55px;
+  min-height: 55px;
   display: flex;
   justify-content: center;
   align-items: center;
-  font-size: 1.5rem;
+  font-size: 1.8rem;
   border: 2px solid var(--border-color);
   border-radius: 5px;
   text-transform: uppercase;
@@ -111,41 +111,52 @@
 /* Responsive adjustments */
 @media (max-width: 768px) {
   .guess-grid {
-    gap: 5px;
+    gap: 8px;
     max-width: 450px;
   }
   
   .guess-row {
-    gap: 5px;
+    gap: 8px;
   }
   
   .letter-cell {
-    width: 55px;
-    height: 55px;
+    min-width: 55px;
+    min-height: 55px;
     font-size: 1.8rem;
   }
 }
 
 @media (max-width: 480px) {
   .guess-grid {
-    gap: 5px;
-    max-width: 320px;
+    gap: 7px;
+    max-width: 350px;
   }
   
   .guess-row {
-    gap: 5px;
+    gap: 7px;
   }
   
   .letter-cell {
+    min-width: 48px;
+    min-height: 48px;
+    font-size: 1.6rem;
+  }
+}
+
+@media (max-width: 375px) {
+  .letter-cell {
+    min-width: 42px;
+    min-height: 42px;
     font-size: 1.5rem;
+    border-width: 1.5px;
   }
 }
 
 @media (max-width: 320px) {
   .letter-cell {
-    width: 35px;
-    height: 35px;
-    font-size: 1.3rem;
+    min-width: 38px;
+    min-height: 38px;
+    font-size: 1.4rem;
     border-width: 1.5px;
   }
 }
