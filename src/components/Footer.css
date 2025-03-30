@@ -1,0 +1,40 @@
+footer {
+  padding: 15px 0;
+  background-color: var(--card-bg);
+  border-top: 1px solid var(--border-color);
+  color: var(--text-secondary);
+  margin-top: auto;
+}
+
+.dark-mode footer {
+  background-color: #1e1e1e;
+  border-top: 1px solid #333;
+  color: #b0b0b0;
+}
+
+.footer-content {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 0 20px;
+  text-align: center;
+}
+
+.footer-content p {
+  margin: 5px 0;
+  font-size: 0.9rem;
+}
+
+.footer-tagline {
+  font-style: italic;
+  opacity: 0.8;
+}
+
+@media (max-width: 480px) {
+  footer {
+    padding: 12px 0;
+  }
+  
+  .footer-content p {
+    font-size: 0.8rem;
+  }
+} 

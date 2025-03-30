@@ -1,0 +1,154 @@
+.keyboard {
+  width: 100%;
+  max-width: 500px;
+  margin: 0 auto;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.keyboard-row {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 8px;
+  width: 100%;
+}
+
+.keyboard-key {
+  min-width: 40px;
+  height: 58px;
+  margin: 0 4px;
+  border-radius: 4px;
+  font-size: 16px;
+  font-weight: bold;
+  border: none;
+  cursor: pointer;
+  background-color: var(--keyboard-bg);
+  color: var(--keyboard-text);
+  box-shadow: var(--keyboard-shadow);
+  text-transform: uppercase;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex: 1;
+  transition: background-color 0.2s, opacity 0.2s, transform 0.1s;
+}
+
+.keyboard-key:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+.keyboard-key:active {
+  transform: translateY(1px);
+}
+
+.dark-mode .keyboard-key {
+  border: 1px solid #444;
+  background-color: #232323;
+}
+
+.keyboard-key.special {
+  min-width: 65px;
+  font-size: 12px;
+  background-color: rgba(0, 0, 0, 0.1);
+}
+
+.dark-mode .keyboard-key.special {
+  background-color: #1a1a1a;
+  border: 1px solid #555;
+}
+
+.keyboard-key.correct {
+  background-color: var(--correct-color);
+  color: white;
+}
+
+.keyboard-key.present {
+  background-color: var(--present-color);
+  color: white;
+}
+
+.keyboard-key.absent {
+  background-color: var(--incorrect-color);
+  color: white;
+}
+
+.keyboard-key.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Mobile keyboard message */
+.mobile-keyboard-message {
+  margin: 20px 0;
+  padding: 15px;
+  background-color: var(--background-color);
+  border-radius: var(--border-radius);
+  text-align: center;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  box-shadow: var(--shadow);
+  width: 100%;
+  max-width: 300px;
+  animation: fadeIn 0.5s;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@media (max-width: 768px) {
+  .keyboard {
+    gap: 8px;
+    max-width: 550px;
+  }
+  
+  .keyboard-key {
+    height: 55px;
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .keyboard {
+    padding: 5px;
+  }
+  
+  .keyboard-row {
+    margin-bottom: 5px;
+  }
+  
+  .keyboard-key {
+    height: 50px;
+    min-width: 30px;
+    margin: 0 2px;
+    font-size: 14px;
+  }
+  
+  .keyboard-key.special {
+    min-width: 50px;
+    font-size: 11px;
+  }
+  
+  .mobile-keyboard-message {
+    padding: 10px;
+    font-size: 0.85rem;
+  }
+}
+
+@media (max-width: 360px) {
+  .keyboard-key {
+    height: 45px;
+    min-width: 5px;
+    font-size: 0.75rem;
+    padding: 0;
+  }
+  
+  .keyboard-key svg {
+    width: 16px;
+    height: 16px;
+  }
+} 

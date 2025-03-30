@@ -1,0 +1,98 @@
+header {
+  padding: 15px 0;
+  background-color: var(--card-bg);
+  box-shadow: var(--shadow);
+  position: relative;
+}
+
+.dark-mode header {
+  background-color: #1e1e1e;
+  border-bottom: 1px solid #333;
+}
+
+.header-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 0 20px;
+  width: 100%;
+  position: relative;
+}
+
+.header-buttons {
+  display: flex;
+  gap: 10px;
+  min-width: 40px;
+  align-items: center;
+  height: 40px;
+}
+
+.header-buttons.left {
+  justify-content: flex-start;
+}
+
+.header-buttons.right {
+  justify-content: flex-end;
+}
+
+.icon-button {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: transparent;
+  border: none;
+  color: var(--text-primary);
+  font-size: 24px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  padding: 0;
+}
+
+.dark-mode .icon-button {
+  color: #fff;
+}
+
+.icon-button:hover {
+  background-color: var(--border-color);
+  transform: scale(1.05);
+}
+
+.icon-button:active {
+  transform: scale(0.95);
+}
+
+@media (max-width: 480px) {
+  .header-container {
+    padding: 0 15px;
+  }
+  
+  .icon-button {
+    width: 35px;
+    height: 35px;
+    font-size: 20px;
+  }
+  
+  .app-title {
+    font-size: 1.7rem;
+  }
+}
+
+.theme-toggle-header {
+  color: var(--text-primary);
+  background-color: transparent;
+  transition: all 0.2s ease;
+}
+
+.theme-toggle-header:hover {
+  transform: rotate(15deg);
+  background-color: var(--border-color);
+}
+
+.dark-mode .theme-toggle-header {
+  color: #ffcc00; /* Yellow for sun in dark mode */
+} 

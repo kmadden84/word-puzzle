@@ -1,13 +1,88 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
+
+:root {
+  --background-color: #f0f2f5;
+  --text-primary: #333333;
+  --text-secondary: #666666;
+  --primary-color: #6a5acd;
+  --secondary-color: #9c88ff;
+  --correct-color: #4CAF50;
+  --present-color: #FFC107;
+  --incorrect-color: #9e9e9e;
+  --border-color: #e0e0e0;
+  --shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  --border-radius: 8px;
+  --card-bg: #ffffff;
+  --keyboard-bg: #d3d6da;
+  --keyboard-text: #1a1a1b;
+  --keyboard-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  --input-border: #d3d6da;
+  --toast-bg: #333333;
+  --toast-text: #ffffff;
+  --btn-primary-bg: #6a5acd;
+  --btn-primary-text: #ffffff;
+  --btn-secondary-bg: #e2e8f0;
+  --btn-secondary-text: #4a5568;
+  --instruction-correct: #4CAF50;
+  --instruction-present: #FFC107;
+  --instruction-absent: #9e9e9e;
+}
+
+.dark-mode {
+  --background-color: #121212;
+  --text-primary: #e0e0e0;
+  --text-secondary: #a0a0a0;
+  --primary-color: #a98df8;
+  --secondary-color: #bb9dff;
+  --correct-color: #4CAF50;
+  --present-color: #FFC107;
+  --incorrect-color: #757575;
+  --border-color: #444444;
+  --shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+  --card-bg: #1e1e1e;
+  --keyboard-bg: #212121;
+  --keyboard-text: #e0e0e0;
+  --keyboard-shadow: 0 3px 5px rgba(0, 0, 0, 0.4);
+  --input-border: #555555;
+  --toast-bg: #333333;
+  --toast-text: #ffffff;
+  --btn-primary-bg: #a98df8;
+  --btn-primary-text: #ffffff;
+  --btn-secondary-bg: #333333;
+  --btn-secondary-text: #e0e0e0;
+  --instruction-correct: #4CAF50;
+  --instruction-present: #FFC107;
+  --instruction-absent: #757575;
+}
+
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+  font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background-color: var(--background-color);
+  color: var(--text-primary);
+  transition: background-color 0.3s ease, color 0.3s ease;
+  min-height: 100vh;
+}
+
+html.dark-mode, 
+body.dark-mode {
+  background-color: #121212;
 }
 
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
+}
+
+button {
+  cursor: pointer;
+  font-family: inherit;
+}
+
+* {
+  box-sizing: border-box;
 }

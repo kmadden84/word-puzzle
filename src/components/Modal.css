@@ -1,0 +1,273 @@
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  animation: fadeIn 0.3s;
+}
+
+.modal-content {
+  background-color: white;
+  width: 90%;
+  max-width: 600px;
+  max-height: 85vh;
+  overflow-y: auto;
+  border-radius: var(--border-radius);
+  padding: 30px;
+  position: relative;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  animation: slideIn 0.3s;
+}
+
+.modal-close {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  font-size: 24px;
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  padding: 0;
+  line-height: 1;
+  box-shadow: none;
+}
+
+.modal-close:hover {
+  color: var(--text-primary);
+  transform: none;
+}
+
+.modal-content h2 {
+  margin-top: 0;
+  margin-bottom: 20px;
+  color: var(--primary-color);
+  text-align: center;
+}
+
+/* Stats Modal Styles */
+.stats-container {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 15px;
+  margin: 20px 0;
+}
+
+.stat-box {
+  background-color: var(--background-color);
+  padding: 15px;
+  border-radius: var(--border-radius);
+  text-align: center;
+}
+
+.stat-value {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--primary-color);
+}
+
+.stat-label {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  margin-top: 5px;
+}
+
+.stats-info {
+  text-align: center;
+  margin-top: 20px;
+  color: var(--text-secondary);
+}
+
+/* Help Modal Styles */
+.help-content {
+  text-align: left;
+}
+
+.help-content h3 {
+  margin: 15px 0 10px;
+  color: var(--primary-color);
+}
+
+.help-content p {
+  margin-bottom: 10px;
+  line-height: 1.5;
+}
+
+.help-content ul {
+  padding-left: 20px;
+  margin-bottom: 15px;
+}
+
+.help-content li {
+  margin-bottom: 8px;
+  line-height: 1.4;
+}
+
+.example-section {
+  margin: 20px 0;
+}
+
+.example {
+  margin-bottom: 15px;
+}
+
+.example-row {
+  display: flex;
+  gap: 5px;
+  margin-bottom: 10px;
+  justify-content: flex-start;
+}
+
+.example-cell {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  border: 2px solid #dfe4ea;
+  font-size: 1.2rem;
+}
+
+.example-cell.correct {
+  background-color: var(--correct-color);
+  color: white;
+  border-color: var(--correct-color);
+}
+
+.example-cell.partial {
+  background-color: var(--partially-correct-color);
+  color: white;
+  border-color: var(--partially-correct-color);
+}
+
+.example-cell.incorrect {
+  background-color: var(--incorrect-color);
+  color: white;
+  border-color: var(--incorrect-color);
+}
+
+.example-highlight {
+  font-weight: 700;
+}
+
+.correct-text {
+  color: var(--correct-color);
+}
+
+.partial-text {
+  color: var(--partially-correct-color);
+}
+
+.incorrect-text {
+  color: var(--incorrect-color);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideIn {
+  from { transform: translateY(50px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+@media (max-width: 768px) {
+  .modal-content {
+    max-width: 500px;
+    padding: 25px;
+  }
+}
+
+@media (max-width: 480px) {
+  .modal-content {
+    padding: 20px 15px;
+    width: 95%;
+    max-height: 90vh;
+  }
+  
+  .stats-container {
+    gap: 10px;
+  }
+  
+  .stat-value {
+    font-size: 1.5rem;
+  }
+  
+  .stat-box {
+    padding: 10px;
+  }
+  
+  .example-cell {
+    width: 35px;
+    height: 35px;
+    font-size: 1rem;
+  }
+  
+  .help-content h3 {
+    font-size: 1.1rem;
+  }
+  
+  .help-content p, .help-content li {
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 360px) {
+  .modal-content {
+    padding: 15px 12px;
+  }
+  
+  .example-cell {
+    width: 30px;
+    height: 30px;
+    font-size: 0.9rem;
+  }
+}
+
+.stats-tabs {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 15px;
+  border-bottom: 1px solid #eee;
+}
+
+.stats-tab {
+  flex: 1;
+  background: none;
+  border: none;
+  padding: 8px 0;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: none;
+  border-bottom: 2px solid transparent;
+  font-weight: 500;
+}
+
+.stats-tab:hover {
+  color: var(--primary-color);
+  transform: none;
+  box-shadow: none;
+}
+
+.stats-tab.active {
+  color: var(--primary-color);
+  border-bottom-color: var(--primary-color);
+  font-weight: 600;
+}
+
+@media (max-width: 480px) {
+  .stats-tab {
+    font-size: 0.8rem;
+    padding: 6px 0;
+  }
+} 

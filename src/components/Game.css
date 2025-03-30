@@ -1,0 +1,312 @@
+.game-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 15px;
+  width: 100%;
+  max-width: 500px;
+  margin: 0 auto;
+  gap: 20px;
+}
+
+.game-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  margin-bottom: 5px;
+}
+
+.category {
+  padding: 8px 15px;
+  background-color: var(--card-bg);
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow);
+  color: var(--text-primary);
+  font-size: 0.9rem;
+}
+
+.category strong {
+  color: var(--primary-color);
+}
+
+.guess-area {
+  width: 100%;
+  cursor: text;
+  margin: 10px 0 15px 0;
+  min-height: 320px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.instructions-button {
+  padding: 8px 15px;
+  background-color: var(--btn-secondary-bg);
+  color: var(--btn-secondary-text);
+  border: none;
+  border-radius: var(--border-radius);
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.dark-mode .instructions-button {
+  background-color: #2c2c2c;
+  color: #e0e0e0;
+  border: 1px solid #3a3a3a;
+}
+
+.instructions-button:hover {
+  background-color: var(--hover-color);
+}
+
+.dark-mode .instructions-button:hover {
+  background-color: #3a3a3a;
+}
+
+.hint-container {
+  margin: 5px 0;
+  width: 100%;
+  max-width: 300px;
+}
+
+.hint-button {
+  width: 100%;
+  padding: 12px;
+  background-color: var(--btn-primary-bg);
+  color: var(--btn-primary-text);
+  border: none;
+  border-radius: var(--border-radius);
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s, opacity 0.3s;
+}
+
+.hint-button:hover:not(:disabled) {
+  background-color: var(--secondary-color);
+}
+
+.hint-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Hidden input for mobile keyboard */
+.hidden-input {
+  position: absolute;
+  opacity: 0;
+  height: 0;
+  width: 0;
+  z-index: -1;
+}
+
+.game-result {
+  background-color: var(--card-bg);
+  padding: 20px;
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow);
+  text-align: center;
+  margin-top: 20px;
+  animation: fadeIn 0.5s;
+  width: 100%;
+  max-width: 600px;
+}
+
+.game-result h2 {
+  margin-bottom: 15px;
+  font-size: 1.5rem;
+}
+
+.current-difficulty {
+  margin: 10px 0;
+  font-size: 0.9rem;
+}
+
+.difficulty-tag {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 12px;
+  background-color: var(--primary-color);
+  color: white;
+  font-weight: 600;
+  font-size: 0.85rem;
+}
+
+.success-text {
+  color: var(--correct-color);
+}
+
+.error-text {
+  color: var(--incorrect-color);
+}
+
+.loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 400px;
+  font-size: 1.2rem;
+  color: var(--text-primary);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 480px) {
+  .game-container {
+    gap: 15px;
+    padding: 0 10px;
+    max-width: 500px;
+  }
+  
+  .game-result {
+    padding: 15px;
+    max-width: 100%;
+  }
+  
+  .game-result h2 {
+    font-size: 1.3rem;
+  }
+  
+  .category {
+    font-size: 0.8rem;
+    padding: 6px 12px;
+  }
+}
+
+/* Lottie Animation Container */
+.lottie-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 999;
+  pointer-events: none;
+  background: rgba(0, 0, 0, 0.05);
+}
+
+/* Next Word Button */
+.next-word-button {
+  margin-top: 15px;
+  padding: 12px 20px;
+  background-color: var(--correct-color);
+  color: white;
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  font-weight: bold;
+}
+
+.next-word-button:hover {
+  background-color: #45a049;
+}
+
+.next-word-button:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+
+.next-word-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 10px;
+}
+
+.next-word-container p {
+  margin-bottom: 10px;
+  font-size: 18px;
+}
+
+.next-word-container strong {
+  color: #e91e63;
+  font-size: 20px;
+}
+
+/* Dark mode toggle */
+.theme-toggle {
+  position: fixed;
+  top: 15px;
+  right: 15px;
+  background: none;
+  border: none;
+  color: var(--text-primary);
+  font-size: 24px;
+  cursor: pointer;
+  z-index: 100;
+  padding: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  background-color: var(--card-bg);
+  box-shadow: var(--shadow);
+  transition: all 0.3s ease;
+}
+
+.theme-toggle:hover {
+  background-color: var(--border-color);
+  transform: rotate(15deg);
+}
+
+.theme-toggle:active {
+  transform: scale(0.9);
+}
+
+.theme-icon {
+  font-size: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.dark-mode .theme-toggle {
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
+}
+
+@media (max-width: 480px) {
+  .theme-toggle {
+    top: 10px;
+    right: 60px;
+    width: 35px;
+    height: 35px;
+  }
+  
+  .theme-icon {
+    font-size: 18px;
+  }
+}
+
+.guess-grid-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  max-width: 500px;
+  flex-grow: 1;
+  padding: 10px 0;
+}
+
+.guess-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.guess-row {
+  display: flex;
+  gap: 5px;
+  justify-content: center;
+} 
