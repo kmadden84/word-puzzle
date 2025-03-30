@@ -408,6 +408,14 @@ const Game = () => {
         >
           Use Hint ({hintsRemaining} left)
         </button>
+        
+        <button
+          className="submit-button"
+          onClick={submitGuess}
+          disabled={gameStatus !== 'playing' || !currentGuess || currentGuess.length !== puzzle?.word?.length}
+        >
+          Submit Word
+        </button>
       </div>
       
       <Keyboard

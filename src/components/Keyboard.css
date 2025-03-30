@@ -151,4 +151,32 @@
     width: 16px;
     height: 16px;
   }
+}
+
+.enter-key {
+  background-color: #4caf50 !important; /* Green color for submit */
+  color: white !important;
+  font-weight: bold;
+  position: relative;
+  min-width: 80px !important; /* Make ENTER key wider */
+}
+
+.enter-key:hover:not(:disabled) {
+  background-color: #45a049 !important;
+}
+
+.enter-key-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+}
+
+.checkmark {
+  font-size: 0.9em;
+}
+
+/* Dark mode styles for ENTER key */
+.dark-mode .enter-key {
+  background-color: #3d8c40 !important;
 } 

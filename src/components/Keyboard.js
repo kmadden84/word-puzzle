@@ -79,18 +79,24 @@ const Keyboard = ({ onKeyPress, guesses, gameStatus }) => {
       {rows.map((row, rowIndex) => (
         <div key={rowIndex} className="keyboard-row">
           {row.map((key) => {
-            const isSpecial = key === 'ENTER' || key === 'BACKSPACE';
+            const isEnter = key === 'ENTER';
+            const isBackspace = key === 'BACKSPACE';
+            const isSpecial = isEnter || isBackspace;
             const status = getKeyStatus(key);
             
             return (
               <button
                 key={key}
-                className={`keyboard-key ${isSpecial ? 'special' : ''} ${status}`}
+                className={`keyboard-key ${isSpecial ? 'special' : ''} ${isEnter ? 'enter-key' : ''} ${status}`}
                 onClick={() => handleKeyPress(key)}
                 disabled={gameStatus !== 'playing'}
-                aria-label={key === 'BACKSPACE' ? 'Backspace' : key}
+                aria-label={isBackspace ? 'Backspace' : key}
               >
-                {key === 'BACKSPACE' ? '⌫' : key}
+                {isBackspace ? '⌫' : isEnter ? (
+                  <span className="enter-key-content">
+                    <span className="checkmark">✓</span> ENTER
+                  </span>
+                ) : key}
               </button>
             );
           })}

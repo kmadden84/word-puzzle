@@ -123,31 +123,55 @@
 }
 
 .hint-container {
-  margin: 5px 0;
-  width: 100%;
-  max-width: 300px;
+  margin: 15px 0;
+  display: flex;
+  justify-content: center;
+  gap: 10px; /* Add gap between buttons */
+  flex-wrap: wrap; /* Allow wrapping on small screens */
+}
+
+.hint-button, .submit-button {
+  padding: 12px 20px;
+  font-size: 1rem;
+  border-radius: 50px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.2s ease;
+  border: none;
+  min-width: 140px;
 }
 
 .hint-button {
-  width: 100%;
-  padding: 12px;
-  background-color: var(--btn-primary-bg);
-  color: var(--btn-primary-text);
-  border: none;
-  border-radius: var(--border-radius);
-  font-weight: 600;
-  font-size: 1rem;
-  cursor: pointer;
-  transition: background-color 0.3s, opacity 0.3s;
+  background-color: var(--hint-button-bg, #ffa500);
+  color: var(--hint-button-text, #fff);
 }
 
-.hint-button:hover:not(:disabled) {
-  background-color: var(--secondary-color);
+.submit-button {
+  background-color: var(--submit-button-bg, #4caf50); /* Green color for submit */
+  color: var(--submit-button-text, #fff);
 }
 
-.hint-button:disabled {
-  opacity: 0.5;
+.hint-button:hover, .submit-button:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+}
+
+.hint-button:disabled, .submit-button:disabled {
+  background-color: #aaa;
   cursor: not-allowed;
+  transform: none;
+  opacity: 0.7;
+  box-shadow: none;
+}
+
+/* Dark mode styles */
+.dark-mode .hint-button {
+  background-color: #e69500;
+}
+
+.dark-mode .submit-button {
+  background-color: #3d8c40;
 }
 
 /* Hidden input for mobile keyboard */
