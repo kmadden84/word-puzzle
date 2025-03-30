@@ -91,6 +91,50 @@
   color: var(--text-secondary);
 }
 
+.difficulty-solved {
+  font-size: 0.75rem;
+  margin-top: 5px;
+  color: var(--text-secondary);
+  padding: 2px 6px;
+  background-color: rgba(0, 0, 0, 0.05);
+  border-radius: 10px;
+}
+
+.dark-mode .difficulty-solved {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.reset-solved-container {
+  margin-top: 15px;
+  text-align: center;
+}
+
+.reset-solved-button {
+  padding: 8px 16px;
+  font-size: 0.8rem;
+  background-color: var(--btn-secondary-bg);
+  color: var(--text-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.reset-solved-button:hover {
+  background-color: var(--hover-color);
+  color: var(--text-primary);
+}
+
+.dark-mode .reset-solved-button {
+  background-color: #2a2a2a;
+  border-color: #444;
+}
+
+.dark-mode .reset-solved-button:hover {
+  background-color: #333;
+  border-color: #555;
+}
+
 @media (max-width: 480px) {
   .difficulty-options {
     gap: 5px;

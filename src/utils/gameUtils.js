@@ -9,7 +9,7 @@ const getDayOfYear = (date) => {
 };
 
 // Get today's puzzle based on the date and difficulty
-export const getTodaysPuzzle = (difficulty = 'beginner', currentPuzzleId = null) => {
+export const getTodaysPuzzle = (difficulty = 'beginner', currentPuzzleId = null, solvedWordIds = []) => {
   // Filter puzzles by difficulty
   const filteredPuzzles = puzzleData.filter(puzzle => 
     puzzle.difficulty === difficulty.toLowerCase()
@@ -20,31 +20,50 @@ export const getTodaysPuzzle = (difficulty = 'beginner', currentPuzzleId = null)
     return puzzleData[0];
   }
   
+  // Create word IDs for the puzzles if they don't have them already
+  const puzzlesWithIds = filteredPuzzles.map((puzzle, index) => ({
+    ...puzzle,
+    wordId: `${difficulty}-${puzzle.word.toLowerCase()}`
+  }));
+  
+  // Filter out solved words
+  const availablePuzzles = puzzlesWithIds.filter(puzzle => 
+    !solvedWordIds.includes(puzzle.wordId)
+  );
+  
+  // If all words have been solved, reset and use all words
+  if (availablePuzzles.length === 0) {
+    console.log("All words solved! Starting over with all words.");
+    availablePuzzles.push(...puzzlesWithIds);
+  }
+  
+  console.log(`Available puzzles for ${difficulty}: ${availablePuzzles.length} words`);
+  
   // If currentPuzzleId is provided, get the next puzzle in the list
   if (currentPuzzleId) {
-    const currentIndex = filteredPuzzles.findIndex(puzzle => puzzle.id === currentPuzzleId);
-    if (currentIndex !== -1 && currentIndex < filteredPuzzles.length - 1) {
+    // Find the current puzzle in the available puzzles
+    const currentIndex = availablePuzzles.findIndex(puzzle => puzzle.id === currentPuzzleId);
+    
+    if (currentIndex !== -1 && currentIndex < availablePuzzles.length - 1) {
       // Return the next puzzle
-      return filteredPuzzles[currentIndex + 1];
+      return availablePuzzles[currentIndex + 1];
     } else {
       // If at the end of the list or not found, return the first puzzle
-      return filteredPuzzles[0];
+      return availablePuzzles[0];
     }
   }
   
-  // For demo purposes, we're using the date to select a puzzle
-  // In a real app, you might fetch this from an API
+  // For demo purposes, select a random puzzle from available puzzles
+  const randomIndex = Math.floor(Math.random() * availablePuzzles.length);
+  const selectedPuzzle = availablePuzzles[randomIndex];
+  
+  // Add date-based ID for persistent storage
   const today = new Date();
   const dateString = `${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate()}`;
   
-  // Use a hash of the date and difficulty to consistently select a puzzle for each day
-  const hashInput = `${dateString}-${difficulty}`;
-  const dateHash = hashCode(hashInput);
-  const puzzleIndex = Math.abs(dateHash) % filteredPuzzles.length;
-  
   return {
-    ...filteredPuzzles[puzzleIndex],
-    id: `${dateString}-${difficulty}` // Use the date and difficulty as the puzzle ID
+    ...selectedPuzzle,
+    id: `${dateString}-${difficulty}-${randomIndex}` // Use date, difficulty and index as ID
   };
 };
 

@@ -3,7 +3,7 @@ import { useGame } from '../contexts/GameContext';
 import './DifficultySelector.css';
 
 const DifficultySelector = () => {
-  const { difficulty, changeDifficulty, gameStatus, guesses } = useGame();
+  const { difficulty, changeDifficulty, gameStatus, guesses, solvedWords, clearSolvedWords } = useGame();
   const isGameInProgress = gameStatus === 'playing' && guesses.length > 0;
 
   const difficultyOptions = [
@@ -33,8 +33,22 @@ const DifficultySelector = () => {
           >
             <span className="difficulty-label">{option.label}</span>
             <span className="difficulty-description">{option.description}</span>
+            <span className="difficulty-solved">
+              {solvedWords[option.value]?.length || 0} solved
+            </span>
           </button>
         ))}
+      </div>
+      
+      {/* Button to reset solved words history */}
+      <div className="reset-solved-container">
+        <button 
+          className="reset-solved-button"
+          onClick={clearSolvedWords}
+          title="This will reset your list of solved words, allowing you to solve all puzzles again"
+        >
+          Reset Solved Words
+        </button>
       </div>
     </div>
   );

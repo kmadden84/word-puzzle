@@ -45,12 +45,33 @@ export const GameProvider = ({ children }) => {
   const [streak, setStreak] = useState(0);
   const [stats, setStats] = useState(initialStats);
   const [difficulty, setDifficulty] = useState('beginner'); // 'beginner', 'intermediate', 'advanced'
+  const [solvedWords, setSolvedWords] = useState({
+    beginner: [],
+    intermediate: [],
+    advanced: []
+  });
 
   useEffect(() => {
-    // Load game state from localStorage
+    // Load game state and solved words from localStorage
     const savedState = localStorage.getItem('wordPuzzleState');
     const savedStats = localStorage.getItem('wordPuzzleStats');
     const savedDifficulty = localStorage.getItem('wordPuzzleDifficulty');
+    const savedSolvedWords = localStorage.getItem('wordPuzzleSolvedWords');
+    
+    // Load saved solved words
+    if (savedSolvedWords) {
+      try {
+        const parsed = JSON.parse(savedSolvedWords);
+        setSolvedWords(parsed);
+      } catch (e) {
+        console.error('Error parsing solved words', e);
+        setSolvedWords({
+          beginner: [],
+          intermediate: [],
+          advanced: []
+        });
+      }
+    }
     
     if (savedStats) {
       try {
@@ -76,7 +97,16 @@ export const GameProvider = ({ children }) => {
       setDifficulty(savedDifficulty);
     }
     
-    const todaysPuzzle = getTodaysPuzzle(savedDifficulty || difficulty);
+    // Use the existing difficulty or fall back to default
+    const currentDifficulty = savedDifficulty || difficulty;
+    
+    // Get solved words for the current difficulty
+    const solvedWordIds = savedSolvedWords 
+      ? JSON.parse(savedSolvedWords)[currentDifficulty] || []
+      : [];
+    
+    // Get a puzzle, excluding solved words
+    const todaysPuzzle = getTodaysPuzzle(currentDifficulty, null, solvedWordIds);
     setPuzzle(todaysPuzzle);
     
     if (savedState) {
@@ -90,6 +120,11 @@ export const GameProvider = ({ children }) => {
       }
     }
   }, []);
+
+  // Save solved words to localStorage when they change
+  useEffect(() => {
+    localStorage.setItem('wordPuzzleSolvedWords', JSON.stringify(solvedWords));
+  }, [solvedWords]);
 
   useEffect(() => {
     // Save game state to localStorage when it changes
@@ -116,13 +151,30 @@ export const GameProvider = ({ children }) => {
     
     // Only update puzzle if we're not in the middle of a game
     if (gameStatus !== 'playing' || guesses.length === 0) {
-      const newPuzzle = getTodaysPuzzle(difficulty);
+      // Get the solved words for the current difficulty
+      const solvedWordIds = solvedWords[difficulty] || [];
+      
+      const newPuzzle = getTodaysPuzzle(difficulty, null, solvedWordIds);
       setPuzzle(newPuzzle);
       resetGame(false);
     } else {
       showMessage('Finish current game before changing difficulty', 'info');
     }
   }, [difficulty]);
+
+  // Helper function to add a word to the solved words list
+  const markWordAsSolved = (word, puzzleDifficulty) => {
+    const wordId = `${puzzleDifficulty}-${word.toLowerCase()}`;
+    
+    // Only add if not already in the list
+    if (!solvedWords[puzzleDifficulty].includes(wordId)) {
+      setSolvedWords(prev => ({
+        ...prev,
+        [puzzleDifficulty]: [...prev[puzzleDifficulty], wordId]
+      }));
+      console.log(`Marked word as solved: ${word} (${puzzleDifficulty})`);
+    }
+  };
 
   const submitGuess = () => {
     if (!puzzle) return;
@@ -190,6 +242,9 @@ export const GameProvider = ({ children }) => {
       setGameStatus('won');
       showMessage('Great job!', 'success');
       updateStats(true);
+      
+      // Mark the word as solved
+      markWordAsSolved(puzzle.word, puzzle.difficulty);
     } else if (newGuesses.length >= 6) {
       setGameStatus('lost');
       showMessage(`The word was ${puzzle.word}`, 'error');
@@ -259,7 +314,10 @@ export const GameProvider = ({ children }) => {
 
   const resetGame = (getNewPuzzle = true) => {
     if (getNewPuzzle) {
-      const todaysPuzzle = getTodaysPuzzle(difficulty);
+      // Get the solved words for the current difficulty
+      const solvedWordIds = solvedWords[difficulty] || [];
+      
+      const todaysPuzzle = getTodaysPuzzle(difficulty, null, solvedWordIds);
       setPuzzle(todaysPuzzle);
     }
     setGuesses([]);
@@ -270,8 +328,11 @@ export const GameProvider = ({ children }) => {
   };
 
   const getNextWord = () => {
-    // Get the next word in the current difficulty level
-    const nextPuzzle = getTodaysPuzzle(difficulty, puzzle?.id);
+    // Get the solved words for the current difficulty
+    const solvedWordIds = solvedWords[difficulty] || [];
+    
+    // Get the next word in the current difficulty level, excluding solved words
+    const nextPuzzle = getTodaysPuzzle(difficulty, puzzle?.id, solvedWordIds);
     console.log("Getting next puzzle after:", puzzle?.id);
     setPuzzle(nextPuzzle);
     setGuesses([]);
@@ -303,6 +364,15 @@ export const GameProvider = ({ children }) => {
     }
   };
 
+  const clearSolvedWords = () => {
+    setSolvedWords({
+      beginner: [],
+      intermediate: [],
+      advanced: []
+    });
+    showMessage('Solved words history cleared!', 'success');
+  };
+
   const value = {
     puzzle,
     guesses,
@@ -315,11 +385,13 @@ export const GameProvider = ({ children }) => {
     shake,
     stats,
     difficulty,
+    solvedWords,
     submitGuess,
     useHint,
     resetGame,
     getNextWord,
-    changeDifficulty
+    changeDifficulty,
+    clearSolvedWords
   };
 
   return (
