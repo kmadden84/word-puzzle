@@ -130,8 +130,16 @@ export const GameProvider = ({ children }) => {
     // Normalize guess for validation to ensure proper length checking
     const normalizedGuess = currentGuess.trim();
     
+    // Check if guess is empty after mobile input changes
+    if (normalizedGuess.length === 0) {
+      showMessage('Please enter a word', 'error');
+      setShake(true);
+      setTimeout(() => setShake(false), 500);
+      return;
+    }
+    
     if (normalizedGuess.length !== puzzle.word.length) {
-      showMessage('Word must be ' + puzzle.word.length + ' letters', 'error');
+      showMessage(`Word must be ${puzzle.word.length} letters`, 'error');
       setShake(true);
       setTimeout(() => setShake(false), 500);
       return;
