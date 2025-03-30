@@ -1,15 +1,15 @@
 {
   "files": {
-    "main.css": "/word-puzzle/static/css/main.070a9e20.css",
-    "main.js": "/word-puzzle/static/js/main.71f5171b.js",
+    "main.css": "/word-puzzle/static/css/main.d00db877.css",
+    "main.js": "/word-puzzle/static/js/main.ce8d8368.js",
     "static/js/453.f7deba45.chunk.js": "/word-puzzle/static/js/453.f7deba45.chunk.js",
     "index.html": "/word-puzzle/index.html",
-    "main.070a9e20.css.map": "/word-puzzle/static/css/main.070a9e20.css.map",
-    "main.71f5171b.js.map": "/word-puzzle/static/js/main.71f5171b.js.map",
+    "main.d00db877.css.map": "/word-puzzle/static/css/main.d00db877.css.map",
+    "main.ce8d8368.js.map": "/word-puzzle/static/js/main.ce8d8368.js.map",
     "453.f7deba45.chunk.js.map": "/word-puzzle/static/js/453.f7deba45.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.070a9e20.css",
-    "static/js/main.71f5171b.js"
+    "static/css/main.d00db877.css",
+    "static/js/main.ce8d8368.js"
   ]
 }
