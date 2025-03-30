@@ -12,14 +12,14 @@ const GuessGrid = ({ guesses, currentGuess, wordLength, maxGuesses, shake }) => 
     
     for (let j = 0; j < wordLength; j++) {
       let cellClass = 'letter-cell';
-      let status = guess.result[j];
+      let status = guess.result[j].status; // Get the status directly
       
       // Map status to CSS class
       if (status === 'correct') {
         cellClass += ' correct';
-      } else if (status === 'present') {
+      } else if (status === 'partial') {
         cellClass += ' present';
-      } else if (status === 'absent') {
+      } else if (status === 'incorrect') {
         cellClass += ' absent';
       }
       
@@ -61,7 +61,7 @@ const GuessGrid = ({ guesses, currentGuess, wordLength, maxGuesses, shake }) => 
       }
       
       // Add pop animation only to the last character
-      if (j === currentGuess.length - 1) {
+      if (j === currentGuess.length - 1 && currentGuess.length > 0) {
         cellClass += ' pop';
       }
       

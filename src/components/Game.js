@@ -39,7 +39,17 @@ const Game = () => {
       if (inputRef.current.value) {
         inputRef.current.value = '';
       }
-      inputRef.current.focus();
+      
+      // Use preventScroll in a try-catch as it's not supported in all browsers
+      try {
+        inputRef.current.focus({ preventScroll: true });
+      } catch (e) {
+        // Fallback method for browsers without preventScroll support
+        const scrollX = window.pageXOffset;
+        const scrollY = window.pageYOffset;
+        inputRef.current.focus();
+        window.scrollTo(scrollX, scrollY);
+      }
     }
   };
 
@@ -173,25 +183,28 @@ const Game = () => {
             e.preventDefault();
           }
         }}
-        // Clear any potential selection or input state when focused
-        onFocus={() => {
-          // Ensure the input is cleared on focus
-          if (inputRef.current) {
-            setTimeout(() => {
-              // Using timeout to ensure this happens after the browser's focus handling
-              inputRef.current.value = '';
-            }, 0);
-          }
-        }}
-        // Ensure the cursor is at the right position
-        onClick={(e) => {
-          // Ensure clicks don't cause odd behavior
+        onFocus={(e) => {
+          // We want to prevent the default focusing behavior which often causes scrolling
           e.preventDefault();
-          // Make sure the input is ready to receive new characters
+          
+          // Store current scroll position
+          const scrollX = window.pageXOffset;
+          const scrollY = window.pageYOffset;
+          
+          // Ensure the input is cleared on focus
           if (inputRef.current) {
             inputRef.current.value = '';
           }
+          
+          // Restore scroll position to prevent movement
+          window.scrollTo(scrollX, scrollY);
         }}
+        onClick={(e) => {
+          // Prevent default click behavior
+          e.preventDefault();
+        }}
+        // Additional input properties for better mobile experience
+        inputMode="text"
         autoComplete="off"
         autoCapitalize="characters"
         autoCorrect="off"

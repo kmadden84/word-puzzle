@@ -95,11 +95,32 @@
 
 /* Hidden input for mobile keyboard */
 .hidden-input {
+  /* Position it in a fixed position that won't cause viewport shifts */
   position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  
+  /* Make it invisible but accessible */
   opacity: 0;
   height: 0;
   width: 0;
-  z-index: -1;
+  padding: 0;
+  margin: 0;
+  border: none;
+  
+  /* Prevent focus styles and interaction disruption */
+  outline: none;
+  background: transparent;
+  -webkit-tap-highlight-color: transparent;
+  pointer-events: auto; /* Needs to receive events */
+  
+  /* Disable scrolling behaviors */
+  -webkit-user-select: none;
+  user-select: none;
+  
+  /* Prevent any automatic scroll adjustments */
+  overscroll-behavior: none;
 }
 
 .game-result {

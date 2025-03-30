@@ -1,13 +1,30 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import './Instructions.css';
 
 const Instructions = ({ onClose, isDarkMode }) => {
   const maxGuesses = 6;
   
+  // Add body class when modal opens and remove when it closes
+  useEffect(() => {
+    // Add class to prevent body scrolling
+    document.body.classList.add('modal-open');
+    
+    // Clean up function to remove class when component unmounts
+    return () => {
+      document.body.classList.remove('modal-open');
+    };
+  }, []);
+
+  // Handle close with cleanup
+  const handleClose = () => {
+    document.body.classList.remove('modal-open');
+    onClose();
+  };
+  
   return (
     <div className={`modal-overlay ${isDarkMode ? 'dark-mode' : ''}`}>
       <div className="modal-container">
-        <button className="close-button" onClick={onClose}>×</button>
+        <button className="close-button" onClick={handleClose}>×</button>
         <h2>How to Play</h2>
         
         <div className="modal-content">
