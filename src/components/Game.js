@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useGame } from '../contexts/GameContext';
+import { useTheme } from '../contexts/ThemeContext';
 import GuessGrid from './GuessGrid';
 import Keyboard from './Keyboard';
 import Message from './Message';
@@ -29,6 +30,7 @@ const Game = () => {
   const [timeRemaining, setTimeRemaining] = useState(2.5);
   const [showInstructions, setShowInstructions] = useState(false);
   const inputRef = useRef(null);
+  const { isDarkMode } = useTheme();
 
   // Focus invisible input when clicked on grid area for mobile
   const focusInput = () => {
@@ -233,7 +235,7 @@ const Game = () => {
         </div>
       )}
       
-      {showInstructions && <Instructions onClose={() => setShowInstructions(false)} />}
+      {showInstructions && <Instructions onClose={() => setShowInstructions(false)} isDarkMode={isDarkMode} />}
     </div>
   );
 };
