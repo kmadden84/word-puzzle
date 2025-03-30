@@ -51,7 +51,6 @@ const LevelCompleteModal = ({ show, difficulty, onClose, solvedCount, totalCount
     if (!isResetting && !isAdvanced && nextDifficultyMap[difficulty]) {
       // Change to next difficulty level
       const nextDifficulty = nextDifficultyMap[difficulty];
-      console.log(`Moving to ${nextDifficulty} difficulty from modal continue button`);
       
       // Change difficulty first
       changeDifficulty(nextDifficulty);
@@ -60,7 +59,6 @@ const LevelCompleteModal = ({ show, difficulty, onClose, solvedCount, totalCount
       // will set hints based on the new word's length when onClose is called
     } else if (!isResetting && isAdvanced) {
       // For advanced level, just close the modal and let Game.js handle logic
-      console.log("Advanced level completed - letting Game.js handle next steps");
       // Game.js will handle resetting hints through getNextWord
     }
     

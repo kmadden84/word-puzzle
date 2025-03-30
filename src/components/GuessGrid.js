@@ -9,7 +9,6 @@ const GuessGrid = ({ guesses, currentGuess, wordLength, maxGuesses, shake }) => 
   const needsScrolling = true;
   
   // Log the scrolling decision
-  console.log(`GuessGrid: Word has length ${wordLength} - Scrolling always enabled`);
   
   // Helper to create a row with cells
   const createRow = (cells, key) => (

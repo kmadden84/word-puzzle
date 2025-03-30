@@ -69,21 +69,18 @@ const Game = () => {
       if (!puzzle || !puzzle.word) return; // Skip if puzzle is null
       
       if (e.key === 'Enter') {
-        console.log("Enter key pressed, submitting guess:", currentGuess);
         e.preventDefault();
         submitGuess();
       } else if (e.key === 'Backspace') {
         // Prevent default only when we're handling it ourselves
         e.preventDefault();
         const newGuess = currentGuess.slice(0, -1);
-        console.log("Window keydown backspace, new guess:", newGuess);
         setCurrentGuess(newGuess);
       } else if (/^[a-zA-Z]$/.test(e.key) && currentGuess.length < (puzzle?.word?.length || 5)) {
         // Prevent default to avoid duplicate characters when using hidden input
         e.preventDefault();
         const newChar = e.key.toUpperCase();
         const newGuess = currentGuess + newChar;
-        console.log("Window keydown adding character:", newChar, "new guess:", newGuess);
         setCurrentGuess(newGuess);
       }
     };
@@ -134,11 +131,9 @@ const Game = () => {
     const solvedCount = solvedWords[difficulty]?.length || 0;
     const totalCount = getDifficultyWordCount(difficulty);
     
-    console.log(`Checking level completion: ${solvedCount}/${totalCount} solved in ${difficulty}`);
     
     // Check if we've solved all words for this difficulty and if so, show the level complete modal
     if (solvedCount >= totalCount && totalCount > 0 && !showLevelCompleteModal) {
-      console.log(`All words solved in ${difficulty} difficulty! Showing level complete modal.`);
       // Using setTimeout to make sure all other game state updates are done first
       setTimeout(() => {
         setShowLevelCompleteModal(true);
@@ -184,7 +179,6 @@ const Game = () => {
         solvedBeginnerCount >= beginnerWordCount;
       
       if (allLevelsCompleted && !gameCompleted) {
-        console.log("All words in all difficulties completed!");
         setGameCompleted(true);
       } else if (!allLevelsCompleted && gameCompleted) {
         // Make sure to reset gameCompleted if words were removed
@@ -200,7 +194,6 @@ const Game = () => {
     // For advanced difficulty, don't try to get next word if all are completed
     if (difficulty === 'advanced' && 
         solvedWords['advanced']?.length >= getDifficultyWordCount('advanced')) {
-      console.log("All advanced words completed - not trying to get next word");
       
       // Check if all levels have been completed
       const intermediateWordCount = getDifficultyWordCount('intermediate');
@@ -218,7 +211,6 @@ const Game = () => {
         return;
       } else {
         // Just go back to Beginner level
-        console.log("Advanced completed but not all levels - going back to Beginner");
         changeDifficulty('beginner');
         
         // The getNextWord function will reset hints based on word length,
@@ -241,7 +233,6 @@ const Game = () => {
   const needsScrolling = true; // Force scrolling to ensure no content is cut off
 
   // Log the current word and scrolling state - with null check
-  console.log(`Word "${puzzle?.word || 'loading'}" has length ${puzzle?.word?.length || 0} - Scrolling enabled: ${needsScrolling}`);
   
   // Class for guess area with conditional scrolling
   const guessAreaClass = `guess-area${needsScrolling ? ' scrollable' : ''}`;
@@ -339,10 +330,8 @@ const Game = () => {
           // Only process if it contains a valid character and we're not at max length
           const lastChar = typed.slice(-1);
           if (/^[A-Z]$/.test(lastChar) && currentGuess.length < puzzle.word.length) {
-            console.log("Input onChange adding character:", lastChar);
             // Make sure we can track this state update
             const newGuess = currentGuess + lastChar;
-            console.log("New guess will be:", newGuess);
             setCurrentGuess(newGuess);
             
             // Reset the input field immediately to prevent duplicate inputs
@@ -423,15 +412,12 @@ const Game = () => {
           if (!puzzle || !puzzle.word) return; // Skip if puzzle is null
           
           if (key === 'ENTER') {
-            console.log("Virtual keyboard Enter pressed, submitting guess:", currentGuess);
             submitGuess();
           } else if (key === 'BACKSPACE') {
             const newGuess = currentGuess.slice(0, -1);
-            console.log("Virtual keyboard backspace, new guess:", newGuess);
             setCurrentGuess(newGuess);
           } else if (currentGuess.length < (puzzle?.word?.length || 5)) {
             const newGuess = currentGuess + key;
-            console.log("Virtual keyboard updated guess to:", newGuess);
             setCurrentGuess(newGuess);
           }
         }}
