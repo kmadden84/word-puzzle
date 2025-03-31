@@ -29,7 +29,8 @@ const Game = () => {
     changeDifficulty,
     getDifficultyWordCount,
     clearSolvedWords,
-    showMessage
+    showMessage,
+    getHintsForWordLength
   } = useGame();
   
   const [showFireworks, setShowFireworks] = useState(false);
@@ -385,6 +386,7 @@ const Game = () => {
             wordLength={puzzle?.word?.length || 5}
             maxGuesses={6}
             shake={shake}
+            revealedHints={revealedHints}
           />
         </div>
       </div>
@@ -395,7 +397,13 @@ const Game = () => {
           onClick={useHint} 
           disabled={gameStatus !== 'playing' || hintsRemaining <= 0}
         >
-          Use Hint ({hintsRemaining} left)
+          {puzzle && puzzle.word && puzzle.word.length <= 3 ? (
+            // For 3-letter words, use singular "hint" since only 1 is allowed
+            `Use Hint ${hintsRemaining > 0 ? `(${hintsRemaining})` : ''}`
+          ) : (
+            // For longer words, use plural form
+            `Use Hint${getHintsForWordLength(puzzle?.word?.length || 0) > 1 ? 's' : ''} ${hintsRemaining > 0 ? `(${hintsRemaining})` : ''}`
+          )}
         </button>
         
         <button

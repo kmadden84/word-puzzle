@@ -1,14 +1,12 @@
 import React from 'react';
 import './GuessGrid.css';
 
-const GuessGrid = ({ guesses, currentGuess, wordLength, maxGuesses, shake }) => {
+const GuessGrid = ({ guesses, currentGuess, wordLength, maxGuesses, shake, revealedHints = [] }) => {
   // Create empty rows to fill the grid
   const rows = [];
   
   // Always enable scrolling to fix display issues
   const needsScrolling = true;
-  
-  // Log the scrolling decision
   
   // Helper to create a row with cells
   const createRow = (cells, key) => (
@@ -52,42 +50,53 @@ const GuessGrid = ({ guesses, currentGuess, wordLength, maxGuesses, shake }) => 
     rows.push(createRow(row, i));
   }
   
-  // Add current guess
+  // Add current guess row with hints
   if (guesses.length < maxGuesses) {
+    const currentRowIndex = guesses.length;
     const row = [];
     
     for (let j = 0; j < wordLength; j++) {
       let cellClass = 'letter-cell';
+      let letterToShow = '';
+      
+      // Only consider hints in the current row
+      const hint = revealedHints.find(h => h.position === j);
       
       if (j < currentGuess.length) {
         cellClass += ' filled';
+        letterToShow = currentGuess[j];
         
         // Apply shake animation if the guess is invalid
         if (shake && j === 0) {
           cellClass += ' shake';
         }
-      }
-      
-      // Add pop animation only to the last character
-      if (j === currentGuess.length - 1 && currentGuess.length > 0) {
-        cellClass += ' pop';
+        
+        // Add pop animation only to the last character
+        if (j === currentGuess.length - 1 && currentGuess.length > 0) {
+          cellClass += ' pop';
+        }
+      } else if (hint) {
+        // Show hint letter with overlay styling in the current row
+        cellClass += ' hint hint-overlay';
+        letterToShow = hint.letter.toUpperCase();
       }
       
       row.push(
         <div 
           key={j} 
           className={cellClass} 
-          data-letter={j < currentGuess.length ? currentGuess[j] : ''}
+          data-letter={letterToShow}
+          title={hint ? "This is a hint - enter this letter" : ""}
         >
-          {j < currentGuess.length ? currentGuess[j] : ''}
+          {letterToShow}
         </div>
       );
     }
     
-    rows.push(createRow(row, guesses.length));
+    rows.push(createRow(row, currentRowIndex));
   }
   
-  // Add empty rows to fill the grid
+  // Add empty rows to fill the grid (without hints)
   for (let i = rows.length; i < maxGuesses; i++) {
     const row = [];
     

@@ -68,7 +68,7 @@ export const GameProvider = ({ children }) => {
   // Helper function to determine number of hints based on word length
   const getHintsForWordLength = (wordLength) => {
     if (wordLength <= 3) {
-      return 1;
+      return 1; // Only 1 hint for 3-letter words or shorter (avoids giving away too much)
     } else if (wordLength <= 6) {
       return 2;
     } else {
@@ -152,8 +152,9 @@ export const GameProvider = ({ children }) => {
     const todaysPuzzle = getTodaysPuzzle(currentDifficulty, null, solvedWordIds);
     setPuzzle(todaysPuzzle);
     
-    // Set initial hints based on word length
+    // Set initial hints based on word length - Critical for 3-letter words to only get 1 hint
     const hintsCount = getHintsForWordLength(todaysPuzzle.word.length);
+    console.log(`Initial puzzle: ${todaysPuzzle.word} (${todaysPuzzle.word.length} letters), setting ${hintsCount} hints`);
     
     if (savedState) {
       const state = JSON.parse(savedState);
@@ -213,6 +214,20 @@ export const GameProvider = ({ children }) => {
       showMessage('Finish current game before changing difficulty', 'info');
     }
   }, [difficulty]);
+
+  // Additional useEffect to monitor puzzle changes and update hints accordingly
+  useEffect(() => {
+    if (puzzle && puzzle.word) {
+      // Calculate the correct number of hints for this word length
+      const hintsCount = getHintsForWordLength(puzzle.word.length);
+      
+      // Only reset hints if they don't match what's expected for this word length
+      if (hintsRemaining !== hintsCount && gameStatus === 'playing' && guesses.length === 0) {
+        console.log(`Correcting hints: Word "${puzzle.word}" (${puzzle.word.length} letters) should have ${hintsCount} hints, but has ${hintsRemaining}`);
+        setHintsRemaining(hintsCount);
+      }
+    }
+  }, [puzzle, hintsRemaining, gameStatus, guesses.length]);
 
   // Helper function to add a word to the solved words list
   const markWordAsSolved = (word, puzzleDifficulty) => {
@@ -298,6 +313,8 @@ export const GameProvider = ({ children }) => {
     const newGuesses = [...guesses, { word: cleanGuess, result }];
     setGuesses(newGuesses);
     setCurrentGuess('');
+    // Clear revealed hints after each guess
+    setRevealedHints([]);
 
     // Determine if the guess is correct
     if (normalizedGuessLower === normalizedTarget) {
@@ -353,7 +370,16 @@ export const GameProvider = ({ children }) => {
   };
 
   const useHint = () => {
-    if (hintsRemaining <= 0 || gameStatus !== 'playing') return;
+    if (hintsRemaining <= 0 || gameStatus !== 'playing' || !puzzle || !puzzle.word) return;
+    
+    // Calculate max hints for this word
+    const maxHints = getHintsForWordLength(puzzle.word.length);
+    
+    // If we've already used the max allowed hints based on word length, don't allow more
+    if (revealedHints.length >= maxHints) {
+      showMessage(`Maximum hints (${maxHints}) already used for this word`, 'info');
+      return;
+    }
     
     // Get a hint (a letter position not yet revealed)
     const revealedPositions = revealedHints.map(h => h.position);
@@ -372,7 +398,14 @@ export const GameProvider = ({ children }) => {
     
     setRevealedHints([...revealedHints, newHint]);
     setHintsRemaining(prev => prev - 1);
-    showMessage(`Hint: Position ${randomPosition + 1} is '${newHint.letter.toUpperCase()}'`, 'info');
+    
+    // Show a message with the appropriate messaging based on remaining hints
+    const remainingHints = hintsRemaining - 1;
+    const hintsMessage = remainingHints === 0 
+      ? 'Hint revealed! (Remember to type it in)' 
+      : `Hint revealed! Enter the letter shown. (${remainingHints} left)`;
+    
+    showMessage(hintsMessage, 'info');
   };
 
   const showMessage = (text, type = 'info') => {
@@ -389,8 +422,15 @@ export const GameProvider = ({ children }) => {
       setPuzzle(todaysPuzzle);
     }
     
-    // Set hints based on word length
-    const hintsCount = puzzle ? getHintsForWordLength(puzzle.word.length) : 3;
+    // Make sure we've got a valid puzzle before calculating hints
+    if (!puzzle || !puzzle.word) {
+      console.error("Cannot reset game: puzzle or word is missing", puzzle);
+      return;
+    }
+    
+    // Set hints based on word length - 3-letter words only get 1 hint
+    const hintsCount = getHintsForWordLength(puzzle.word.length);
+    console.log(`Resetting game with ${hintsCount} hints for ${puzzle.word.length}-letter word "${puzzle.word}"`);
     
     setGuesses([]);
     setCurrentGuess('');
@@ -429,13 +469,14 @@ export const GameProvider = ({ children }) => {
     
     setPuzzle(nextPuzzle);
     
-    // Set hints based on word length
+    // Reset hints based on word length - crucial for 3-letter words to only get 1 hint
     const hintsCount = getHintsForWordLength(nextPuzzle.word.length);
+    console.log(`Word length: ${nextPuzzle.word.length}, setting ${hintsCount} hints for word "${nextPuzzle.word}"`);
     
     setGuesses([]);
     setCurrentGuess('');
     setGameStatus('playing');
-    setHintsRemaining(hintsCount);
+    setHintsRemaining(hintsCount); // This should be set to 1 for 3-letter words
     setRevealedHints([]);
     
     // Save the new state
@@ -499,11 +540,15 @@ export const GameProvider = ({ children }) => {
     const newPuzzle = getTodaysPuzzle('beginner', null, []);
     setPuzzle(newPuzzle);
     
-    // Reset game state
+    // Reset game state with the correct number of hints for the new puzzle
     setGuesses([]);
     setCurrentGuess('');
     setGameStatus('playing');
-    setHintsRemaining(getHintsForWordLength(newPuzzle.word.length));
+    
+    // Make sure we're using the correct number of hints based on word length
+    const hintCount = getHintsForWordLength(newPuzzle.word.length);
+    console.log(`Resetting game data with ${hintCount} hints for ${newPuzzle.word.length}-letter word "${newPuzzle.word}"`);
+    setHintsRemaining(hintCount);
     setRevealedHints([]);
     
     showMessage('Game reset! All data cleared.', 'success');
@@ -530,7 +575,9 @@ export const GameProvider = ({ children }) => {
     clearSolvedWords,
     resetAllGameData,
     // Export the function that gets word counts dynamically
-    getDifficultyWordCount: getWordCountForDifficulty
+    getDifficultyWordCount: getWordCountForDifficulty,
+    // Export the function that calculates hints based on word length
+    getHintsForWordLength
   };
 
   return (

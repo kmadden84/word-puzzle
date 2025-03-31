@@ -157,6 +157,68 @@
   100% { transform: scale(1); }
 }
 
+.letter-cell.hint {
+  background-color: rgba(106, 170, 100, 0.15); /* Semi-transparent background */
+  border-color: var(--hint-color);
+  border-width: 2px;
+  color: var(--hint-color);
+  font-weight: bold;
+  position: relative;
+  overflow: hidden;
+  animation: hint-pulse 2s infinite;
+}
+
+.dark-mode .letter-cell.hint {
+  background-color: rgba(80, 128, 235, 0.2); /* Semi-transparent background for dark mode */
+  color: var(--hint-color);
+  border-color: var(--hint-color);
+}
+
+/* Add overlay effect to hint letter */
+.letter-cell.hint::after {
+  content: "Type this";
+  position: absolute;
+  bottom: 3px;
+  left: 0;
+  right: 0;
+  font-size: 9px;
+  font-weight: normal;
+  text-transform: none;
+  opacity: 0.8;
+  color: var(--hint-color);
+}
+
+.letter-cell.hint-overlay {
+  position: relative;
+  z-index: 1;
+  box-shadow: 0 0 10px rgba(106, 170, 100, 0.5);
+}
+
+.letter-cell.hint-overlay::before {
+  content: "";
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  border: 2px dashed var(--hint-color);
+  border-radius: 5px;
+  z-index: -1;
+  opacity: 0.5;
+  animation: dashedBorder 8s linear infinite;
+}
+
+.dark-mode .letter-cell.hint-overlay::before {
+  border-color: var(--hint-color);
+}
+
+/* Pulse animation for hints */
+@keyframes hint-pulse {
+  0% { opacity: 0.7; }
+  50% { opacity: 1; }
+  100% { opacity: 0.7; }
+}
+
 /* Responsive adjustments */
 @media (max-width: 768px) {
   .guess-grid {
@@ -172,6 +234,11 @@
     min-width: 55px;
     min-height: 55px;
     font-size: 1.8rem;
+  }
+  
+  .letter-cell.hint::after {
+    font-size: 8px;
+    bottom: 2px;
   }
 }
 
@@ -190,6 +257,11 @@
     min-height: 48px;
     font-size: 1.6rem;
   }
+  
+  .letter-cell.hint::after {
+    font-size: 7px;
+    bottom: 2px;
+  }
 }
 
 @media (max-width: 375px) {
@@ -198,6 +270,11 @@
     min-height: 42px;
     font-size: 1.5rem;
     border-width: 1.5px;
+  }
+  
+  .letter-cell.hint::after {
+    font-size: 6px;
+    bottom: 1px;
   }
 }
 
@@ -208,6 +285,10 @@
     font-size: 1.4rem;
     border-width: 1.5px;
   }
+  
+  .letter-cell.hint::after {
+    display: none; /* Hide the text on very small screens */
+  }
 }
 
 @media (max-width: 280px) {
@@ -216,5 +297,14 @@
     height: 30px;
     font-size: 1.1rem;
     border-width: 1px;
+  }
+}
+
+@keyframes dashedBorder {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
   }
 } 
