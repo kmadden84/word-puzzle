@@ -20,9 +20,17 @@ const GuessGrid = ({ guesses, currentGuess, wordLength, maxGuesses, shake, revea
     const guess = guesses[i];
     const row = [];
     
+    if (!guess || !guess.result) {
+      console.error('Invalid guess object:', guess);
+      continue;
+    }
+    
     for (let j = 0; j < wordLength; j++) {
       let cellClass = 'letter-cell';
-      let status = guess.result[j].status; // Get the status directly
+      
+      // Safely access the status
+      const result = guess.result[j];
+      const status = result ? result.status : 'incorrect';
       
       // Map status to CSS class
       if (status === 'correct') {
@@ -36,13 +44,16 @@ const GuessGrid = ({ guesses, currentGuess, wordLength, maxGuesses, shake, revea
       // Add flip animation class
       cellClass += ' flip';
       
+      // Safely access the letter
+      const letter = guess.word && guess.word[j] ? guess.word[j] : '';
+      
       row.push(
         <div 
           key={j} 
           className={cellClass} 
-          data-letter={guess.word[j]}
+          data-letter={letter}
         >
-          {guess.word[j]}
+          {letter}
         </div>
       );
     }

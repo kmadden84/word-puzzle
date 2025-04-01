@@ -106,55 +106,35 @@ const hashCode = (str) => {
 
 // Check a guess against the target word
 export const checkGuess = (guess, targetWord) => {
-  // Normalize both words for consistency
-  const normalizedGuess = guess.toLowerCase().trim();
-  const normalizedTarget = targetWord.toLowerCase().trim();
+  const result = [];
   
-  // Direct comparison for exact matches
-  if (normalizedGuess === normalizedTarget) {
-    return normalizedGuess.split('').map(letter => ({
-      letter,
-      status: 'correct'
-    }));
-  }
+  // Convert both to uppercase
+  const guessUpper = guess.toUpperCase();
+  const targetUpper = targetWord.toUpperCase();
   
-  const targetLetters = normalizedTarget.split('');
-  const guessLetters = normalizedGuess.split('');
+  // Convert target to array for includes check
+  const targetArray = targetUpper.split('');
   
-  // First pass: mark correct letters and track unused letters for second pass
-  const result = Array(guessLetters.length).fill(null);
-  const unusedTargetIndices = Array(targetLetters.length).fill(true);
-  
-  // Mark correct positions first
-  for (let i = 0; i < guessLetters.length; i++) {
-    if (guessLetters[i] === targetLetters[i]) {
-      result[i] = { letter: guess[i], status: 'correct' };
-      unusedTargetIndices[i] = false; // Mark this target letter as used
+  // Process each letter in the guess
+  for (let i = 0; i < guessUpper.length; i++) {
+    const letter = guessUpper[i];
+    
+    // GREEN: Letter is in correct position
+    if (letter === targetUpper[i]) {
+      result.push({ letter: guess[i], status: 'correct' });
+    }
+    // YELLOW: Letter is in the word but wrong position
+    else if (targetArray.includes(letter)) {
+      result.push({ letter: guess[i], status: 'partial' });
+    }
+    // RED: Letter is not in the word
+    else {
+      result.push({ letter: guess[i], status: 'incorrect' });
     }
   }
   
-  // Second pass: mark partial matches and incorrect letters
-  for (let i = 0; i < guessLetters.length; i++) {
-    if (result[i] === null) { // Skip positions already marked as correct
-      // Check if this letter exists elsewhere in the target
-      let partialMatch = false;
-      
-      for (let j = 0; j < targetLetters.length; j++) {
-        if (unusedTargetIndices[j] && guessLetters[i] === targetLetters[j]) {
-          // Found a match at a different position
-          result[i] = { letter: guess[i], status: 'partial' };
-          unusedTargetIndices[j] = false; // Mark this target letter as used
-          partialMatch = true;
-          break;
-        }
-      }
-      
-      if (!partialMatch) {
-        // No match found for this letter
-        result[i] = { letter: guess[i], status: 'incorrect' };
-      }
-    }
-  }
+  console.log(`Checking "${guess}" against "${targetWord}"`);
+  console.log('Result:', result.map(r => `${r.letter}:${r.status}`).join(', '));
   
   return result;
 };
@@ -166,15 +146,16 @@ export const getKeyboardState = (guesses) => {
   // Process guesses in order
   guesses.forEach(guess => {
     guess.result.forEach(({ letter, status }) => {
+      const upperLetter = letter.toUpperCase();
       // Only upgrade key state (incorrect -> partial -> correct)
-      const currentStatus = keyState[letter] || 'unused';
+      const currentStatus = keyState[upperLetter] || 'unused';
       
       if (status === 'correct') {
-        keyState[letter] = 'correct';
+        keyState[upperLetter] = 'correct';
       } else if (status === 'partial' && currentStatus !== 'correct') {
-        keyState[letter] = 'partial';
+        keyState[upperLetter] = 'partial';
       } else if (status === 'incorrect' && currentStatus === 'unused') {
-        keyState[letter] = 'incorrect';
+        keyState[upperLetter] = 'incorrect';
       }
     });
   });

@@ -62,16 +62,19 @@
 
 .keyboard-key.correct {
   background-color: var(--correct-color);
+  border-color: var(--correct-color);
   color: white;
 }
 
 .keyboard-key.present {
   background-color: var(--present-color);
+  border-color: var(--present-color);
   color: white;
 }
 
 .keyboard-key.absent {
   background-color: var(--incorrect-color);
+  border-color: var(--incorrect-color);
   color: white;
 }
 
