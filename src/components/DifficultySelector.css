@@ -56,14 +56,6 @@
   border-color: #333;
 }
 
-.difficulty-option:hover:not(:disabled):not(.selected) {
-  background-color: var(--hover-color);
-}
-
-.dark-mode .difficulty-option:hover:not(:disabled):not(.selected) {
-  background-color: #2a2a2a;
-}
-
 .difficulty-option.selected {
   background-color: var(--primary-light);
   border-color: var(--primary-color);
@@ -156,8 +148,14 @@
 }
 
 .reset-solved-button:hover, .reset-all-button:hover {
-  background-color: var(--hover-color);
-  color: var(--text-primary);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.reset-solved-button:hover {
+  background-color: var(--primary-light);
+  border-color: var(--primary-color);
+  color: var(--primary-color);
 }
 
 .reset-all-button {
@@ -177,8 +175,10 @@
 }
 
 .dark-mode .reset-solved-button:hover {
-  background-color: #333;
-  border-color: #555;
+  background-color: rgba(128, 90, 213, 0.2);
+  border-color: var(--primary-color);
+  color: var(--primary-color);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
 }
 
 .dark-mode .reset-all-button {
@@ -190,6 +190,30 @@
 .dark-mode .reset-all-button:hover {
   background-color: rgba(255, 99, 71, 0.25);
   color: #ff9985;
+}
+
+.difficulty-option:hover:not(:disabled):not(.selected) .difficulty-label,
+.difficulty-option:hover:not(:disabled):not(.selected) .difficulty-description,
+.difficulty-option:hover:not(:disabled):not(.selected) .difficulty-solved {
+  color: var(--text-primary);
+}
+
+.dark-mode .difficulty-option:hover:not(:disabled):not(.selected) .difficulty-label,
+.dark-mode .difficulty-option:hover:not(:disabled):not(.selected) .difficulty-description,
+.dark-mode .difficulty-option:hover:not(:disabled):not(.selected) .difficulty-solved {
+  color: var(--text-primary);
+}
+
+.dark-mode .difficulty-option:hover:not(:disabled):not(.selected) .difficulty-progress .progress-bar-container {
+  background-color: rgba(255, 255, 255, 0.15);
+}
+
+.difficulty-option:hover:not(:disabled):not(.selected) .difficulty-solved {
+  background-color: rgba(0, 0, 0, 0.1);
+}
+
+.dark-mode .difficulty-option:hover:not(:disabled):not(.selected) .difficulty-solved {
+  background-color: rgba(255, 255, 255, 0.15);
 }
 
 @media (max-width: 480px) {
